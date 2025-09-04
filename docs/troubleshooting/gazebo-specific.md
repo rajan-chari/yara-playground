@@ -1,6 +1,6 @@
-# Gazebo-Specific Troubleshooting
+# Gazebo-Specific Troubleshooting for Marine Simulation
 
-This guide addresses issues specific to Gazebo Classic simulation and its integration with ROS.
+This guide addresses issues specific to Gazebo Classic marine simulation and its integration with ROS for the Yara_OVE experimental playground.
 
 ## Installation and Setup Issues
 
@@ -26,13 +26,17 @@ wget https://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
 # Update package lists
 sudo apt update
 
-# Install Gazebo with ROS integration
+# Install Gazebo with ROS integration for marine simulation
 sudo apt install gazebo11 libgazebo11-dev
 sudo apt install ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-ros-control
 
-# Verify installation
+# Install marine-specific plugins (if available)
+sudo apt install ros-noetic-gazebo-plugins
+
+# Verify marine simulation installation
 gazebo --version
 which gzserver gzclient
+gazebo worlds/ocean.world  # Test marine world loading
 ```
 
 ### Gazebo-ROS Integration Issues
@@ -175,80 +179,86 @@ gazebo --verbose
 
 ## Model and World Issues
 
-### Model Loading Problems
-**Problem**: Models fail to load or display incorrectly
+### Marine Model Loading Problems
+**Problem**: E-Boat or marine models fail to load or display incorrectly
 ```bash
-[Err] [SystemPaths.cc:429] File or path does not exist[/path/to/model]
-Error [parser.cc:581] Unable to find uri[model://model_name]
+[Err] [SystemPaths.cc:429] File or path does not exist[/path/to/e_boat_model]
+Error [parser.cc:581] Unable to find uri[model://e_boat]
 ```
 
 **Solutions**:
 ```bash
-# Check model path
+# Check marine model path
 echo $GAZEBO_MODEL_PATH
-ls ~/.gazebo/models/
+ls ~/.gazebo/models/ | grep -i boat
+ls ~/.gazebo/models/ | grep -i marine
 
-# Download default models
+# Download default marine models
 cd ~/.gazebo/
 wget -r -np -nH --cut-dirs=2 \
   http://models.gazebosim.org/
+# Look for: sailboat, boat, buoy, ocean models
 
-# Or use Gazebo model database
-gazebo --verbose  # Will download models automatically
+# Add Yara_OVE custom model path
+export GAZEBO_MODEL_PATH=/path/to/yara_ove/models:$GAZEBO_MODEL_PATH
 
-# Add custom model path
-export GAZEBO_MODEL_PATH=/path/to/custom/models:$GAZEBO_MODEL_PATH
-
-# Verify model structure
-ls model_directory/
+# Verify E-Boat model structure
+ls e_boat_model/
 # Should contain: model.config model.sdf meshes/ materials/
 
-# Check model.config format
+# Check E-Boat model.config format
 <?xml version="1.0"?>
 <model>
-  <name>model_name</name>
+  <name>e_boat</name>
   <version>1.0</version>
   <sdf version="1.6">model.sdf</sdf>
-  <description>Model description</description>
+  <description>E-Boat sailing robot for Yara_OVE</description>
 </model>
 
-# Test model loading
-gazebo --verbose model_name.sdf
+# Test E-Boat model loading
+gazebo --verbose e_boat.sdf
+roslaunch yara_ove_simulation spawn_e_boat.launch
 ```
 
-### URDF/SDF Conversion Issues
-**Problem**: Robot models don't display correctly when spawned
+### E-Boat URDF/SDF Conversion Issues
+**Problem**: E-Boat sailing robot models don't display correctly when spawned
 ```bash
-[ERROR] No p gain specified for pid. Namespace: /gazebo_ros_control/pid_gains/joint_name
-Warning [parser.cc:778] Converting a deprecated SDF source[/tmp/...].
+[ERROR] No p gain specified for pid. Namespace: /gazebo_ros_control/pid_gains/sail_joint
+Warning [parser.cc:778] Converting a deprecated SDF source[/tmp/e_boat_...].
 ```
 
 **Solutions**:
 ```bash
-# Check URDF syntax
-check_urdf robot.urdf
-rosrun urdf_parser check_urdf robot.urdf
+# Check E-Boat URDF syntax
+check_urdf e_boat.urdf
+rosrun urdf_parser check_urdf e_boat.urdf
 
-# Convert URDF to SDF for inspection
-gz sdf -p robot.urdf > robot.sdf
+# Convert E-Boat URDF to SDF for inspection
+gz sdf -p e_boat.urdf > e_boat.sdf
 
-# Verify Gazebo-specific tags in URDF
-grep -n "gazebo" robot.urdf
+# Verify sailing-specific Gazebo tags in E-Boat URDF
+grep -n "gazebo" e_boat.urdf
+grep -n "sail" e_boat.urdf
+grep -n "rudder" e_boat.urdf
 
-# Add necessary Gazebo plugins
+# Add necessary sailing robot Gazebo plugins
 <gazebo>
   <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-    <robotNamespace>/robot</robotNamespace>
+    <robotNamespace>/sailing_robot</robotNamespace>
   </plugin>
 </gazebo>
 
-# Add joint properties for Gazebo
-<gazebo reference="joint_name">
+# Add sailing joint properties for Gazebo
+<gazebo reference="sail_joint">
+  <provideFeedback>true</provideFeedback>
+</gazebo>
+<gazebo reference="rudder_joint">
   <provideFeedback>true</provideFeedback>
 </gazebo>
 
-# Test spawning with verbose output
-rosrun gazebo_ros spawn_model -file robot.urdf -urdf -model my_robot -verbose
+# Test E-Boat spawning with verbose output
+rosrun gazebo_ros spawn_model -file e_boat.urdf -urdf -model sailing_robot -verbose
+roslaunch yara_ove_simulation spawn_e_boat.launch verbose:=true
 ```
 
 ### Physics Simulation Issues
@@ -650,7 +660,7 @@ ss -tulpn | grep 11345
 
 ## Related Documentation
 
-- **Common Issues**: [Common Issues](common-issues.md) for general troubleshooting
-- **Installation**: [Gazebo Installation](../installation/gazebo.md) for setup guidance
-- **Usage**: [Gazebo Simulation](../usage/gazebo-simulation.md) for basic operations
-- **Verification**: [Installation Verification](../installation/verification.md) for testing
+- **Common Issues**: [Common Issues](common-issues.md) for general sailing robotics troubleshooting
+- **Installation**: [Gazebo Installation](../installation/gazebo.md) for marine simulation setup
+- **Usage**: [Marine Simulation](../usage/gazebo-simulation.md) for Yara_OVE operations
+- **Verification**: [Installation Verification](../installation/verification.md) for sailing robotics testing

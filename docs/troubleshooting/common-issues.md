@@ -1,6 +1,6 @@
-# Common Issues and Solutions
+# Common Issues and Solutions for Sailing Robotics
 
-This guide covers the most frequently encountered issues when working with ROS, Gazebo, and conda environments.
+This guide covers the most frequently encountered issues when working with ROS, Gazebo, and conda environments in the Yara_OVE experimental playground for autonomous sailing robotics.
 
 ## General System Issues
 
@@ -26,45 +26,50 @@ sudo usermod -a -G plugdev $USER
 ```
 
 ### Environment Variables Not Set
-**Problem**: ROS commands not found or environment not properly configured
+**Problem**: ROS commands not found or environment not properly configured for sailing robotics
 ```bash
 roscore: command not found
 ```
 
 **Solutions**:
 ```bash
-# Manually source ROS environment
+# Manually source ROS environment for sailing robotics
 source /opt/ros/noetic/setup.bash
 
-# Add to .bashrc permanently
+# Add to .bashrc permanently for Yara_OVE development
 echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 
-# Verify environment
+# Verify sailing robotics environment
 echo $ROS_DISTRO
 echo $ROS_PACKAGE_PATH
+rospack find yara_ove_simulation  # Verify Yara_OVE packages
 ```
 
 ### Network Configuration Issues
-**Problem**: ROS nodes can't communicate between machines
+**Problem**: ROS nodes can't communicate between machines (important for sailing robot remote control)
 ```bash
 ROS_MASTER_URI not connecting
 ```
 
 **Solutions**:
 ```bash
-# Check network configuration
+# Check network configuration for sailing robot deployment
 hostname -I
 echo $ROS_MASTER_URI
 echo $ROS_HOSTNAME
 
-# Set proper network variables
+# Set proper network variables for local sailing simulation
 export ROS_MASTER_URI=http://localhost:11311
 export ROS_HOSTNAME=localhost
 
-# For multi-machine setup
-export ROS_MASTER_URI=http://MASTER_IP:11311
+# For multi-machine setup (sailing robot + shore station)
+export ROS_MASTER_URI=http://SAILING_ROBOT_IP:11311
 export ROS_IP=$(hostname -I | cut -d' ' -f1)
+
+# Test sailing robot connectivity
+rostopic list | grep sailing_robot
+rosnode list | grep navigation
 ```
 
 ## Installation and Package Issues
@@ -98,29 +103,30 @@ sudo apt update
 ```
 
 ### catkin_make Build Failures
-**Problem**: Workspace fails to build
+**Problem**: Sailing robotics workspace fails to build
 ```bash
 CMake Error: Could not find package configuration file
 ```
 
 **Solutions**:
 ```bash
-# Clean build artifacts
-cd ~/catkin_ws/
+# Clean sailing robotics build artifacts
+cd ~/sailing_ws/  # or ~/catkin_ws/
 rm -rf build/ devel/
 
-# Source ROS environment before building
+# Source ROS environment before building Yara_OVE packages
 source /opt/ros/noetic/setup.bash
 catkin_make
 
-# Check for missing dependencies
+# Check for missing sailing robotics dependencies
 rosdep update
 rosdep install --from-paths src --ignore-src -r -y
 
-# Debug specific package
-catkin_make --pkg package_name
+# Debug specific sailing package
+catkin_make --pkg yara_ove_navigation
+catkin_make --pkg sailing_control
 
-# Verbose output for debugging
+# Verbose output for debugging sailing robotics
 catkin_make --verbose
 ```
 
@@ -177,35 +183,37 @@ roscore
 ```
 
 ### Node Communication Problems
-**Problem**: ROS nodes can't find each other
+**Problem**: Sailing robot nodes can't find each other
 ```bash
-ERROR: service [/service_name] unavailable
+ERROR: service [/sailing_robot/set_waypoint] unavailable
 ```
 
 **Solutions**:
 ```bash
-# Check running nodes
-rosnode list
-rosnode info /node_name
+# Check running sailing nodes
+rosnode list | grep sailing
+rosnode info /sailing_robot/navigation
 
-# Check topics
-rostopic list
-rostopic info /topic_name
+# Check sailing topics
+rostopic list | grep sailing_robot
+rostopic info /sailing_robot/wind_data
+rostopic info /sailing_robot/gps
 
-# Check services
-rosservice list
-rosservice info /service_name
+# Check sailing services
+rosservice list | grep sailing
+rosservice info /sailing_robot/set_waypoint
 
-# Test communication
-rostopic echo /topic_name
-rosservice call /service_name
+# Test sailing communication
+rostopic echo /sailing_robot/wind_data
+rostopic echo /sailing_robot/sail_angle
+rosservice call /sailing_robot/emergency_stop
 
-# Check ROS graph
-rqt_graph
+# Check sailing ROS graph
+rqt_graph  # Look for sailing robot connections
 
-# Restart problematic nodes
-rosnode kill /node_name
-# Then restart the node
+# Restart problematic sailing nodes
+rosnode kill /sailing_robot/navigation
+roslaunch yara_ove_navigation sailing_navigation.launch
 ```
 
 ### High CPU/Memory Usage
@@ -360,31 +368,35 @@ rosparam set /param_name value
 
 ## Data Recording and Playback
 
-### Bag File Issues
-**Problem**: Bag files corrupted or won't play
+### Sailing Data Bag File Issues
+**Problem**: Sailing session bag files corrupted or won't play
 ```bash
-rosbag play: error reading bag file
+rosbag play: error reading sailing_session.bag file
 ```
 
 **Solutions**:
 ```bash
-# Check bag file integrity
-rosbag check file.bag
-rosbag info file.bag
+# Check sailing bag file integrity
+rosbag check sailing_session.bag
+rosbag info sailing_session.bag
 
-# Repair corrupted bag
-rosbag reindex file.bag
-rosbag fix input.bag output.bag
+# Repair corrupted sailing bag
+rosbag reindex sailing_session.bag
+rosbag fix sailing_session.bag sailing_session_fixed.bag
 
-# Filter problematic topics
-rosbag filter input.bag output.bag 'topic != "/problematic_topic"'
+# Filter problematic sailing topics
+rosbag filter sailing_session.bag clean_session.bag 'topic != "/sailing_robot/camera/image_raw"'
 
-# Convert between bag formats
-rosbag compress file.bag
-rosbag decompress file.bag
+# Extract specific sailing data
+rosbag filter sailing_session.bag wind_data.bag 'topic == "/sailing_robot/wind_data"'
+rosbag filter sailing_session.bag gps_data.bag 'topic == "/sailing_robot/gps"'
 
-# Split large bag files
-rosbag filter input.bag output.bag 't.secs >= start_time and t.secs <= end_time'
+# Convert sailing bag formats
+rosbag compress sailing_session.bag
+rosbag decompress sailing_session.bag
+
+# Split sailing session by time
+rosbag filter sailing_session.bag morning_sail.bag 't.secs >= 1000 and t.secs <= 5000'
 ```
 
 ### Clock Synchronization Issues
@@ -541,6 +553,10 @@ When basic troubleshooting doesn't resolve your issue:
 
 ## Related Documentation
 
-- **Installation**: [Installation guides](../installation/) for proper setup
-- **Basic Commands**: [Basic Commands](../usage/basic-commands.md) for fundamental operations
-- **Verification**: [Installation Verification](../installation/verification.md) for system validation
+- **Installation**: [Sailing Robotics Installation](../installation/) for proper Yara_OVE setup
+- **Basic Commands**: [Sailing Robot Commands](../usage/basic-commands.md) for fundamental sailing operations
+- **Verification**: [Installation Verification](../installation/verification.md) for sailing robotics system validation
+- **Sailing-Specific Issues**:
+  - [ROS-Specific Issues](ros-specific.md) for sailing robot ROS problems
+  - [Gazebo-Specific Issues](gazebo-specific.md) for marine simulation issues
+  - [Conda-Specific Issues](conda-specific.md) for sailing AI environment problems

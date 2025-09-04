@@ -1,21 +1,21 @@
 # Gazebo Simulation Guide
 
-This guide covers practical usage of Gazebo Classic for robot simulation with ROS integration.
+This guide covers practical usage of Gazebo Classic for robotic simulation, supporting the Yara_OVE experimental playground.
 
-## Getting Started with Gazebo
+## Getting Started with Simulation
 
-### Basic Gazebo Launch
+### Basic Environment Launch
 ```bash
 # Launch Gazebo with empty world
 roslaunch gazebo_ros empty_world.launch
 
 # Launch with specific world
-roslaunch gazebo_ros empty_world.launch world_name:=willowgarage.world
+roslaunch gazebo_ros empty_world.launch world_name:=world_name.world
 
-# Launch without GUI (headless)
+# Launch headless mode (no GUI)
 roslaunch gazebo_ros empty_world.launch gui:=false
 
-# Launch paused (useful for setup)
+# Launch paused for robot setup
 roslaunch gazebo_ros empty_world.launch paused:=true
 ```
 
@@ -32,7 +32,7 @@ roslaunch gazebo_ros empty_world.launch \
   verbose:=true
 ```
 
-## Working with Models
+## Working with Robot Models
 
 ### Spawning Models
 
@@ -40,7 +40,7 @@ roslaunch gazebo_ros empty_world.launch \
 ```bash
 # Spawn robot from URDF file
 rosrun gazebo_ros spawn_model \
-  -model my_robot \
+  -model robot_name \
   -file robot.urdf \
   -urdf \
   -x 0 -y 0 -z 0.1
@@ -48,32 +48,32 @@ rosrun gazebo_ros spawn_model \
 
 #### From SDF File
 ```bash
-# Spawn robot from SDF file
+# Spawn model from SDF file
 rosrun gazebo_ros spawn_model \
-  -model my_robot \
-  -file robot.sdf \
+  -model model_name \
+  -file model.sdf \
   -sdf \
   -x 0 -y 0 -z 0.1
 ```
 
 #### From ROS Parameter
 ```bash
-# Load URDF to parameter server first
+# Load URDF to parameter server
 rosparam load robot.urdf robot_description
 
-# Spawn from parameter
+# Spawn robot from parameter
 rosrun gazebo_ros spawn_model \
-  -model my_robot \
+  -model robot_name \
   -param robot_description \
   -urdf \
   -x 0 -y 0 -z 0.1
 ```
 
-#### With Initial Pose and Orientation
+#### With Initial Position and Orientation
 ```bash
-# Spawn with specific pose
+# Spawn model with specific pose
 rosrun gazebo_ros spawn_model \
-  -model my_robot \
+  -model robot_name \
   -file robot.urdf \
   -urdf \
   -x 2.0 -y 1.0 -z 0.1 \
@@ -85,15 +85,15 @@ rosrun gazebo_ros spawn_model \
 # List all models in simulation
 rostopic echo /gazebo/model_states -n 1
 
-# Delete a model
-rosservice call /gazebo/delete_model "model_name: 'my_robot'"
+# Remove model from simulation
+rosservice call /gazebo/delete_model "model_name: 'robot_name'"
 
 # Get model state
-rosservice call /gazebo/get_model_state "model_name: 'my_robot'"
+rosservice call /gazebo/get_model_state "model_name: 'robot_name'"
 
-# Set model state
+# Set model position and orientation
 rosservice call /gazebo/set_model_state "model_state:
-  model_name: 'my_robot'
+  model_name: 'robot_name'
   pose:
     position: {x: 1.0, y: 2.0, z: 0.1}
     orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}"
@@ -366,7 +366,15 @@ rosrun gazebo_ros spawn_model -model robot3 -file robot.urdf -urdf -x 4 -y 0 -z 
 
 ## Next Steps
 
-- **Advanced Integration**: See [Advanced Workflows](advanced-workflows.md)
-- **Python Development**: Try [Python Environments](python-environments.md)
+- **Advanced Integration**: See [Advanced Workflows](advanced-workflows.md) for complex scenarios
+- **AI Development**: Try [Python Environments](python-environments.md) for machine learning
 - **Troubleshooting**: Check [Gazebo-Specific Issues](../troubleshooting/gazebo-specific.md)
-- **Learning More**: Follow [Learning Path](../resources/learning-path.md)
+- **Learning Resources**: Follow [Learning Path](../resources/learning-path.md) for skill development
+
+---
+
+**🚀 Master Gazebo Simulation!**
+
+*Use these techniques to fully leverage the Yara_OVE experimental playground's simulation capabilities.*
+
+*Building upon the original [Yara_OVE project](https://github.com/medialab-fboat/Yara_OVE) research.*

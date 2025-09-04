@@ -1,6 +1,6 @@
-# ROS-Specific Troubleshooting
+# ROS-Specific Troubleshooting for Sailing Robotics
 
-This guide focuses on issues specific to ROS Noetic installation, configuration, and operation.
+This guide focuses on issues specific to ROS Noetic installation, configuration, and operation in the Yara_OVE experimental playground for autonomous sailing robotics.
 
 ## ROS Installation Issues
 
@@ -118,33 +118,38 @@ source ~/.bashrc
 env | grep ROS
 ```
 
-### Workspace Configuration Issues
-**Problem**: Catkin workspace not properly configured
+### Sailing Robotics Workspace Configuration Issues
+**Problem**: Catkin workspace for sailing robotics not properly configured
 ```bash
-Package not found in workspace
-catkin_make fails with CMake errors
+Package 'yara_ove_navigation' not found in workspace
+catkin_make fails with sailing package CMake errors
 ```
 
 **Solutions**:
 ```bash
-# Verify workspace structure
-ls -la ~/catkin_ws/
+# Verify sailing workspace structure
+ls -la ~/sailing_ws/  # or ~/catkin_ws/
 # Should have: src/ build/ devel/
 
-# Recreate workspace if corrupted
-rm -rf ~/catkin_ws/build/ ~/catkin_ws/devel/
-cd ~/catkin_ws/
+# Check for Yara_OVE packages
+ls ~/sailing_ws/src/
+# Should include sailing packages like yara_ove_simulation, sailing_control
+
+# Recreate sailing workspace if corrupted
+rm -rf ~/sailing_ws/build/ ~/sailing_ws/devel/
+cd ~/sailing_ws/
 catkin_make
 
-# Source workspace after building
-source ~/catkin_ws/devel/setup.bash
+# Source sailing workspace after building
+source ~/sailing_ws/devel/setup.bash
 
-# Add workspace sourcing to bashrc (after ROS sourcing)
-echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
+# Add sailing workspace sourcing to bashrc (after ROS sourcing)
+echo "source ~/sailing_ws/devel/setup.bash" >> ~/.bashrc
 
-# Verify workspace is in ROS package path
+# Verify sailing workspace is in ROS package path
 echo $ROS_PACKAGE_PATH
-# Should include: /home/user/catkin_ws/src
+# Should include: /home/user/sailing_ws/src
+rospack find yara_ove_navigation  # Test sailing package discovery
 ```
 
 ### Python Path Issues
@@ -178,71 +183,75 @@ python3 -c "import geometry_msgs; print('geometry_msgs import successful')"
 
 ## Runtime Issues
 
-### Master Connection Problems
-**Problem**: Nodes can't connect to ROS master
+### Sailing Robot Master Connection Problems
+**Problem**: Sailing robot nodes can't connect to ROS master
 ```bash
 Unable to register with master node [http://localhost:11311]: master may not be running yet
 ```
 
 **Solutions**:
 ```bash
-# Check if roscore is running
+# Check if roscore is running for sailing simulation
 ps aux | grep roscore
 pgrep roscore
 
-# Check ROS master URI
+# Check ROS master URI for sailing robotics
 echo $ROS_MASTER_URI
 # Should be: http://localhost:11311
 
-# Start roscore if not running
+# Start roscore for sailing simulation
 roscore &
 
-# Test master connection
-rostopic list
-rosnode list
+# Test sailing master connection
+rostopic list | grep sailing
+rosnode list | grep sailing
 
-# For remote master connection
-export ROS_MASTER_URI=http://REMOTE_IP:11311
+# For remote sailing robot connection (boat to shore)
+export ROS_MASTER_URI=http://SAILING_ROBOT_IP:11311
 export ROS_IP=$(hostname -I | cut -d' ' -f1)
 
-# Test connection to remote master
-ping REMOTE_IP
-telnet REMOTE_IP 11311
+# Test connection to sailing robot master
+ping SAILING_ROBOT_IP
+telnet SAILING_ROBOT_IP 11311
+rostopic list | grep sailing_robot
 ```
 
-### Node Communication Issues
-**Problem**: ROS nodes can't communicate
+### Sailing Robot Node Communication Issues
+**Problem**: Sailing robot nodes can't communicate
 ```bash
-WARN: no messages received and simulated time is active
-ERROR: service [/service_name] unavailable
+WARN: no sailing wind data received and simulated time is active
+ERROR: service [/sailing_robot/set_waypoint] unavailable
 ```
 
 **Solutions**:
 ```bash
-# Check node status
-rosnode list
-rosnode ping /node_name
+# Check sailing node status
+rosnode list | grep sailing
+rosnode ping /sailing_robot/navigation
+rosnode ping /sailing_robot/wind_sensor
 
-# Check topic connectivity
-rostopic list
-rostopic info /topic_name
-rostopic hz /topic_name
+# Check sailing topic connectivity
+rostopic list | grep sailing_robot
+rostopic info /sailing_robot/wind_data
+rostopic hz /sailing_robot/gps
 
-# Debug communication with graph
+# Debug sailing communication with graph
 rosrun rqt_graph rqt_graph
+# Look for sailing robot node connections
 
-# Check for time synchronization issues
+# Check for sailing simulation time synchronization
 rosparam get use_sim_time
-# If true, ensure clock publisher is running
+# If true for Yara_OVE, ensure Gazebo clock is running
 rostopic echo /clock
+gazebo --version  # Verify Gazebo is running
 
-# Reset time if needed
+# Reset simulation time for sailing
 rosparam set use_sim_time false
 
-# Check network configuration
+# Check sailing robot network configuration
 echo $ROS_HOSTNAME
 echo $ROS_IP
-# Both should be set for multi-machine setups
+# Critical for sailing robot to shore communication
 ```
 
 ### Package and Node Issues

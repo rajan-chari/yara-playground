@@ -1,6 +1,6 @@
-# Basic Commands Reference
+# Basic Commands
 
-This guide provides essential commands for working with ROS Noetic, Gazebo, and Miniconda.
+This guide provides essential commands for ROS Noetic, Gazebo simulation, and Miniconda environments used in the Yara_OVE experimental playground.
 
 ## ROS Commands
 
@@ -9,7 +9,7 @@ This guide provides essential commands for working with ROS Noetic, Gazebo, and 
 # Start ROS master
 roscore
 
-# Run a ROS node
+# Run a node
 rosrun package_name node_name
 
 # Launch multiple nodes
@@ -18,7 +18,7 @@ roslaunch package_name launch_file.launch
 # Check ROS version
 rosversion -d
 
-# Get help for any ROS command
+# Get help for commands
 rosrun --help
 roslaunch --help
 ```
@@ -31,16 +31,16 @@ rostopic list
 # Show topic information
 rostopic info /topic_name
 
-# Echo topic messages
+# Monitor topic data
 rostopic echo /topic_name
 
-# Publish to a topic
-rostopic pub /topic_name message_type "data"
+# Publish to topic
+rostopic pub /cmd_vel geometry_msgs/Twist "linear: {x: 2.0} angular: {z: 0.5}"
 
-# Get topic message rate
+# Check topic data rate
 rostopic hz /topic_name
 
-# Show topic message type
+# Show message types
 rostopic type /topic_name
 ```
 
@@ -129,31 +129,31 @@ source devel/setup.bash
 
 ### Basic Gazebo Operations
 ```bash
-# Start Gazebo with GUI
+# Start Gazebo GUI
 gazebo
 
-# Start Gazebo server only (headless)
+# Start simulation server (headless)
 gzserver
 
-# Start Gazebo client only
+# Start visualization client
 gzclient
 
 # Start with specific world
-gazebo worlds/willowgarage.world
+gazebo worlds/world_name.world
 
 # Get help
 gazebo --help
 ```
 
-### Gazebo with ROS
+### Gazebo with ROS Integration
 ```bash
 # Launch empty world
 roslaunch gazebo_ros empty_world.launch
 
 # Launch with specific world
-roslaunch gazebo_ros empty_world.launch world_name:=willowgarage.world
+roslaunch gazebo_ros empty_world.launch world_name:=world_file.world
 
-# Launch without GUI
+# Launch headless mode
 roslaunch gazebo_ros empty_world.launch gui:=false
 
 # Launch paused
@@ -163,15 +163,15 @@ roslaunch gazebo_ros empty_world.launch paused:=true
 ### Model Management
 ```bash
 # Spawn model from file
-rosrun gazebo_ros spawn_model -model my_robot -file robot.sdf
+rosrun gazebo_ros spawn_model -model model_name -file model.sdf
 
 # Spawn model from parameter
-rosrun gazebo_ros spawn_model -model my_robot -param robot_description -urdf
+rosrun gazebo_ros spawn_model -model model_name -param robot_description -urdf
 
-# Delete model
-rosservice call /gazebo/delete_model '{model_name: my_robot}'
+# Remove model from simulation
+rosservice call /gazebo/delete_model '{model_name: model_name}'
 
-# List models
+# List models in simulation
 rostopic echo /gazebo/model_states -n 1
 ```
 
@@ -210,7 +210,7 @@ conda env list
 conda create -n env_name python=3.9
 
 # Create environment with packages
-conda create -n env_name python=3.9 numpy pandas
+conda create -n env_name python=3.9 numpy matplotlib opencv pytorch
 
 # Activate environment
 conda activate env_name
@@ -224,7 +224,7 @@ conda env remove -n env_name
 # Export environment
 conda env export > environment.yml
 
-# Create from file
+# Create environment from file
 conda env create -f environment.yml
 ```
 
@@ -303,9 +303,9 @@ conda info --envs
 conda update conda
 ```
 
-## Common Workflows
+## Example Workflows
 
-### ROS Development Workflow
+### Basic ROS Development Workflow
 ```bash
 # 1. Start ROS
 roscore &
@@ -315,24 +315,24 @@ cd ~/catkin_ws/
 catkin_make
 source devel/setup.bash
 
-# 3. Run nodes
-rosrun my_package my_node &
+# 3. Launch nodes
+rosrun package_name node_name &
 
 # 4. Monitor topics
 rostopic list
-rostopic echo /my_topic
+rostopic echo /topic_name
 
 # 5. Cleanup
 pkill -f roscore
 ```
 
-### Gazebo Simulation Workflow
+### Simulation Workflow
 ```bash
 # 1. Start ROS + Gazebo
 roslaunch gazebo_ros empty_world.launch &
 
-# 2. Spawn robot
-rosrun gazebo_ros spawn_model -model my_robot -file robot.urdf -urdf
+# 2. Spawn models
+rosrun gazebo_ros spawn_model -model robot -file robot.urdf -urdf
 
 # 3. Monitor simulation
 rostopic echo /gazebo/model_states
@@ -348,22 +348,22 @@ pkill -f roslaunch
 ### Python Development Workflow
 ```bash
 # 1. Create environment
-conda create -n my_project python=3.9 numpy matplotlib
+conda create -n my_env python=3.9 numpy matplotlib opencv
 
 # 2. Activate environment
-conda activate my_project
+conda activate my_env
 
-# 3. Install additional packages
-conda install scikit-learn
-pip install some_package
+# 3. Install packages
+conda install pytorch scikit-learn
+pip install additional_packages
 
-# 4. Work on project
+# 4. Develop code
 python my_script.py
 
 # 5. Export environment
 conda env export > environment.yml
 
-# 6. Deactivate
+# 6. Deactivate environment
 conda deactivate
 ```
 
@@ -432,4 +432,10 @@ conda install --help
 # https://docs.conda.io/
 ```
 
-For more advanced usage patterns, see [Advanced Workflows](advanced-workflows.md).
+For advanced patterns and workflows, see [Advanced Workflows](advanced-workflows.md).
+
+---
+
+**⚡ Master These Commands for Effective Development!**
+
+*These commands form the foundation of your development workflow in the Yara_OVE experimental playground.*

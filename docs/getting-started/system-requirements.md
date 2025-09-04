@@ -3,9 +3,9 @@
 ## Operating System Compatibility
 
 ### Supported Systems
-- **Ubuntu 20.04 LTS (Focal Fossa)** - ✅ **Recommended and Tested**
+- **Ubuntu 20.04 LTS (Focal Fossa)** - ✅ **Recommended**
 - Ubuntu 18.04 LTS (Bionic Beaver) - Limited support
-- Ubuntu 22.04 LTS (Jammy Jellyfish) - Experimental
+- Ubuntu 22.04 LTS (Jammy Jellyfish) - Experimental compatibility
 
 ### Hardware Requirements
 
@@ -19,51 +19,60 @@
 - **CPU**: 4+ cores, 2.5+ GHz
 - **RAM**: 8+ GB
 - **Storage**: 20+ GB free space (SSD preferred)
-- **Graphics**: Dedicated GPU for Gazebo simulation
+- **Graphics**: Dedicated GPU (enhanced rendering and processing)
 
-## Current System Status
+## System Verification
 
-Your system meets all requirements:
+To check if your system meets the requirements:
 
-- **OS**: Ubuntu 20.04.6 LTS (focal) ✅
-- **Architecture**: x86_64 ✅
-- **Available Space**: 954 GB ✅
-- **Environment**: WSL2 compatible ✅
+```bash
+# Check OS version
+lsb_release -a
+
+# Check architecture
+uname -m
+
+# Check available disk space
+df -h
+
+# Check memory
+free -h
+```
 
 ## Component Requirements
 
 ### ROS Noetic
-- Ubuntu 20.04 LTS (primary target)
-- Python 3.8+
-- GCC 9.x compiler
+- Ubuntu 20.04 LTS (optimal compatibility)
+- Python 3.8+ (required for modern packages)
+- GCC 9.x compiler (for building packages)
 
 ### Gazebo Classic 11
 - OpenGL 3.3+ support
 - Mesa 18.0+ or proprietary GPU drivers
-- 2 GB RAM for basic simulation
+- 2 GB RAM for basic simulation (4+ GB for complex scenarios)
 
 ### Miniconda
 - 400 MB disk space (base installation)
 - Internet connection for package downloads
-- Bash shell for optimal integration
+- Bash shell compatibility
 
 ## Network Requirements
 
-- **Internet connection** for package downloads
-- **Bandwidth**: 100 Mbps recommended for initial installation
+- **Internet connection** for package downloads and updates
+- **Bandwidth**: 100 Mbps recommended for large assets
 - **Firewall**: Allow HTTP/HTTPS for package repositories
 
 ## Known Limitations
 
-### WSL2
+### WSL2 Development
 - ✅ **ROS**: Full support
 - ✅ **Gazebo**: GUI support with X11 forwarding
-- ✅ **Miniconda**: Full support
+- ✅ **Miniconda**: Complete development support
 
 ### Virtual Machines
-- ⚠️ **3D acceleration** may be limited
-- ⚠️ **Performance** impact on simulation
-- ✅ **Development** workflows supported
+- ⚠️ **3D acceleration** may limit visualization quality
+- ⚠️ **Performance** impact on complex simulations
+- ✅ **Development** workflows fully supported
 
 ## Verification Commands
 

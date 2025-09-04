@@ -1,198 +1,228 @@
-# ROS Noetic + Gazebo + Miniconda Setup
+# Yara_OVE Experimental Playground
 
-A comprehensive robotics development environment featuring ROS Noetic, Gazebo Classic simulation, and Miniconda Python package management on Ubuntu 20.04 LTS.
+An experimental environment for exploring autonomous sailing robot simulation using the **Yara_OVE** (Yara Ocean Virtual Environment) framework.
 
-## Quick Start
+## What is This Project?
 
-Get up and running in minutes:
+This repository serves as a hands-on exploration platform for **Yara_OVE**, an autonomous sailing robot simulation developed by academic researchers. Yara_OVE provides detailed marine robotics simulation with realistic sailing dynamics and autonomous navigation challenges.
 
-1. **Check Requirements**: Ensure you have Ubuntu 20.04 LTS → [System Requirements](docs/getting-started/system-requirements.md)
-2. **Quick Setup**: Follow the fast-track installation → [Quick Start Guide](docs/getting-started/quick-start.md)
-3. **Verify Installation**: Test your setup → [Installation Verification](docs/installation/verification.md)
+**This is not a production system** – it's a learning laboratory where you can experiment with sailing robotics technology.
 
-## What's Included
+## About Yara_OVE
 
-This setup provides a complete robotics development stack:
+**Yara_OVE** is an ocean virtual environment designed specifically for autonomous sailing robots, originally developed by researchers at Medialab FBoat. The system offers:
 
-- **🤖 ROS Noetic**: Full desktop installation with core packages
-- **🌍 Gazebo Classic 11**: 3D physics simulation with ROS integration  
-- **🐍 Miniconda**: Lightweight Python environment management
-- **📦 Integrated Workflow**: Seamless interaction between all components
+### 🌊 **Advanced Sailing Physics**
+- **6-DOF sailing dynamics**: Complete freedom of movement with realistic boat physics
+- **300x real-time speedup**: Accelerated learning and experimentation
+- **Specialized wind/wave simulation**: Dynamic environmental conditions
+- **Digital twin of E-Boat**: Based on real-world sailing vessel data
+
+### 🤖 **Autonomous Navigation Capabilities**
+- **Reinforcement learning integration**: Train AI agents for sailing decisions
+- **Autonomous tacking maneuvers**: Complex sailing behaviors
+- **Upwind navigation strategies**: Advanced sailing techniques
+- **Real-time decision making**: Adaptive responses to changing conditions
+
+### 🏗️ **Built on Proven Technology**
+- **Gazebo simulation engine**: Industry-standard 3D physics
+- **ROS integration**: Robot Operating System compatibility
+- **Extensible architecture**: Customize for your experiments
+
+## Why Experiment with Sailing Robotics?
+
+Autonomous sailing presents unique challenges that make it fascinating for researchers and enthusiasts:
+
+- **Complex environmental dynamics**: Wind patterns, wave interactions, and weather changes
+- **Multi-objective optimization**: Speed, safety, energy efficiency, and route planning
+- **Non-linear control systems**: Sailing requires complex decision-making algorithms
+- **Real-world applications**: Ocean monitoring, autonomous cargo, environmental research
+
+## Prerequisites
+
+This experimental environment builds on a solid robotics foundation. You'll need:
+
+- **Ubuntu 20.04 LTS** with ROS Noetic installed
+- **Gazebo Classic 11** for 3D simulation
+- **Python environment** (Miniconda recommended) for algorithm development
+- **Basic robotics knowledge** helpful but not required
+
+*Note: This documentation will help you verify and set up the required ROS/Gazebo/Python stack.*
+
+## Learning Opportunities
+
+Experimenting with Yara_OVE opens doors to understanding:
+
+### 🧠 **Artificial Intelligence & Machine Learning**
+- Reinforcement learning for autonomous decision-making
+- Multi-agent systems and fleet coordination
+- Computer vision for environmental perception
+- Predictive modeling for weather and sea conditions
+
+### ⛵ **Marine Engineering & Physics**
+- Sailing aerodynamics and hydrodynamics
+- Boat stability and performance optimization
+- Weather routing and tactical sailing
+- Energy-efficient propulsion systems
+
+### 🤖 **Advanced Robotics**
+- Sensor fusion and state estimation
+- Path planning in dynamic environments
+- Robust control systems design
+- Human-robot interaction for maritime operations
+
+## Getting Started with Yara_OVE
+
+### Phase 1: Environment Setup
+1. **Verify Base Installation**: Confirm ROS Noetic and Gazebo are working → [System Requirements](docs/getting-started/system-requirements.md)
+2. **Test Basic Functionality**: Run initial system checks → [Installation Verification](docs/installation/verification.md)
+
+### Phase 2: Yara_OVE Installation
+1. **Clone Yara_OVE Repository**: Get the simulation framework
+2. **Build Sailing Packages**: Compile the specialized sailing physics
+3. **Configure Environment**: Set up for autonomous sailing experiments
+
+### Phase 3: First Experiments
+1. **Launch Basic Simulation**: Start with simple sailing scenarios
+2. **Explore Sailing Physics**: Understand wind/wave interactions
+3. **Experiment with Control**: Try manual and autonomous sailing modes
+
+## Original Academic Work
+
+This experimental playground is built to explore the research behind **Yara_OVE**:
+
+**Original Repository**: [github.com/medialab-fboat/Yara_OVE](https://github.com/medialab-fboat/Yara_OVE)
+
+### Academic Contributors & Acknowledgments
+We gratefully acknowledge the researchers at **Medialab FBoat** who developed this sailing simulation framework. Their work represents years of research in autonomous marine robotics, sailing physics modeling, and reinforcement learning applications.
+
+*This experimental repository is an independent exploration of their publicly available research and should not be considered an official extension or endorsement.*
 
 ## Documentation Structure
 
+The existing documentation structure supports your Yara_OVE experimentation:
+
 ### 🚀 Getting Started
-- [**Quick Start Guide**](docs/getting-started/quick-start.md) - Fast-track setup in 30 minutes
-- [**System Requirements**](docs/getting-started/system-requirements.md) - Prerequisites and compatibility
+- [**Quick Start Guide**](docs/getting-started/quick-start.md) - Foundation setup verification
+- [**System Requirements**](docs/getting-started/system-requirements.md) - Prerequisites for sailing simulation
 
 ### 📥 Installation Guides
-- [**ROS Noetic Installation**](docs/installation/ros-noetic.md) - Complete ROS setup
-- [**Gazebo Installation**](docs/installation/gazebo.md) - Simulation environment setup
-- [**Miniconda Installation**](docs/installation/miniconda.md) - Python environment management
-- [**Installation Verification**](docs/installation/verification.md) - Test all components
+- [**ROS Noetic Installation**](docs/installation/ros-noetic.md) - Core robotics framework
+- [**Gazebo Installation**](docs/installation/gazebo.md) - 3D sailing simulation environment
+- [**Miniconda Installation**](docs/installation/miniconda.md) - Python for algorithm development
+- [**Installation Verification**](docs/installation/verification.md) - Confirm your foundation is solid
 
 ### 💻 Usage Guides
-- [**Basic Commands**](docs/usage/basic-commands.md) - Essential ROS and system commands
-- [**Gazebo Simulation**](docs/usage/gazebo-simulation.md) - Running and managing simulations
-- [**Python Environments**](docs/usage/python-environments.md) - Managing conda environments
-- [**Advanced Workflows**](docs/usage/advanced-workflows.md) - Complex integration patterns
+- [**Basic Commands**](docs/usage/basic-commands.md) - Essential ROS commands for sailing
+- [**Gazebo Simulation**](docs/usage/gazebo-simulation.md) - Running sailing simulations
+- [**Python Environments**](docs/usage/python-environments.md) - ML/AI development setup
+- [**Advanced Workflows**](docs/usage/advanced-workflows.md) - Complex sailing experiments
 
 ### 🔧 Troubleshooting
-- [**Common Issues**](docs/troubleshooting/common-issues.md) - General troubleshooting guide
-- [**ROS-Specific Issues**](docs/troubleshooting/ros-specific.md) - ROS installation and runtime problems
-- [**Gazebo-Specific Issues**](docs/troubleshooting/gazebo-specific.md) - Simulation-related problems
+- [**Common Issues**](docs/troubleshooting/common-issues.md) - General troubleshooting
+- [**ROS-Specific Issues**](docs/troubleshooting/ros-specific.md) - ROS problems and solutions
+- [**Gazebo-Specific Issues**](docs/troubleshooting/gazebo-specific.md) - Simulation environment issues
 - [**Conda-Specific Issues**](docs/troubleshooting/conda-specific.md) - Python environment problems
 
 ### 📚 Resources
-- [**Learning Path**](docs/resources/learning-path.md) - Structured learning guide from beginner to advanced
-- [**Additional Resources**](docs/resources/additional-resources.md) - External links, tools, and communities
+- [**Learning Path**](docs/resources/learning-path.md) - Structured approach to sailing robotics
+- [**Additional Resources**](docs/resources/additional-resources.md) - External sailing robotics resources
 
-## Current Installation Status
+## Required Foundation Components
 
-### ✅ Completed Components
+To run Yara_OVE experiments, you need these core components:
 
-| Component | Version | Status | Verification |
-|-----------|---------|--------|--------------|
-| **Ubuntu** | 20.04 LTS | ✅ Installed | `lsb_release -a` |
-| **ROS Noetic** | 1.15.x | ✅ Installed | `rosversion -d` |
-| **Gazebo Classic** | 11.15.1 | ✅ Installed | `gazebo --version` |
-| **Miniconda** | 25.7.0 | ✅ Installed | `conda --version` |
+### 📦 Core Components
+| Component | Version | Purpose |
+|-----------|---------|---------|
+| **Ubuntu** | 20.04 LTS | Stable Linux foundation |
+| **ROS Noetic** | 1.15.x | Robot communication framework |
+| **Gazebo Classic** | 11.15.1 | 3D sailing simulation |
+| **Miniconda** | 25.7.0 | AI/ML development environment |
 
-### 🔧 Environment Configuration
+*Use the [installation guides](docs/installation/) to set up these components and [verification](docs/installation/verification.md) to confirm they work correctly.*
 
-```bash
-# ROS Environment
-source /opt/ros/noetic/setup.bash
-export ROS_DISTRO=noetic
-export ROS_MASTER_URI=http://localhost:11311
-export ROS_HOSTNAME=localhost
+## Next Steps: Your Sailing Robotics Journey
 
-# Conda Integration
-source ~/miniconda3/etc/profile.d/conda.sh
-conda activate base
+### 🔰 **New to Sailing Robotics?**
+1. **Learn the Basics**: Start with [Learning Path](docs/resources/learning-path.md)
+2. **Understand Sailing Physics**: Study wind/wave dynamics
+3. **Explore Simple Controls**: Begin with basic sailing maneuvers
 
-# Gazebo Integration
-export GAZEBO_PLUGIN_PATH=/opt/ros/noetic/lib:$GAZEBO_PLUGIN_PATH
-```
+### ⚡ **Ready to Experiment?**
+1. **Clone Yara_OVE**: Get the sailing simulation framework
+2. **Run First Simulation**: Launch a basic sailing scenario
+3. **Modify Parameters**: Experiment with wind, waves, and boat configurations
 
-## Quick Commands Reference
+### 🧠 **AI/ML Focus?**
+1. **Study Reinforcement Learning**: Understand autonomous decision-making
+2. **Experiment with Training**: Create sailing AI agents
+3. **Analyze Performance**: Evaluate autonomous sailing strategies
 
-### Essential ROS Commands
-```bash
-# Start ROS core
-roscore
+### 🌊 **Marine Engineering Interest?**
+1. **Study Sailing Dynamics**: Dive deep into sailing physics
+2. **Optimize Boat Design**: Experiment with hull and sail configurations
+3. **Weather Strategy**: Explore routing and tactical decisions
 
-# List active nodes/topics/services
-rosnode list
-rostopic list
-rosservice list
+## Community & Support
 
-# Monitor topics
-rostopic echo /topic_name
-rostopic hz /topic_name
-```
+### Learning Resources
+- **Original Yara_OVE Repository**: [github.com/medialab-fboat/Yara_OVE](https://github.com/medialab-fboat/Yara_OVE)
+- **ROS Community**: [ROS Answers](https://answers.ros.org) | [ROS Discourse](https://discourse.ros.org)
+- **Sailing Robotics**: Research papers and academic resources
 
-### Simulation Commands
-```bash
-# Launch empty Gazebo world
-roslaunch gazebo_ros empty_world.launch
+### Getting Help
+1. **Check Documentation**: Start with guides above
+2. **Review Troubleshooting**: Common issues and solutions
+3. **Explore Examples**: Learn from working configurations
+4. **Join Community**: Connect with sailing robotics enthusiasts
 
-# Spawn a robot
-rosrun gazebo_ros spawn_model -file robot.urdf -urdf -model my_robot
+## Research & Academic Context
 
-# Control robot movement
-rostopic pub /cmd_vel geometry_msgs/Twist -r 10 -- '[1.0, 0.0, 0.0]' '[0.0, 0.0, 0.5]'
-```
+This experimental playground connects you to active research areas:
+- **Autonomous marine vehicles** and ocean exploration
+- **Reinforcement learning** for complex control systems
+- **Environmental modeling** for marine conditions
+- **Multi-objective optimization** in dynamic environments
+- **Human-robot interaction** in maritime contexts
 
-### Python Environment Commands
-```bash
-# Create new environment
-conda create -n robotics python=3.8
+## License & Ethical Use
 
-# Activate environment
-conda activate robotics
-
-# Install packages
-conda install numpy matplotlib opencv
-pip install rospkg rospy_message_converter
-```
-
-## Integration Workflow
-
-This setup enables powerful robotics development workflows:
-
-1. **🧪 Develop in Python**: Use conda environments for isolated development
-2. **🤖 Test with ROS**: Integrate algorithms with ROS communication
-3. **🌍 Simulate in Gazebo**: Test robots in realistic 3D environments
-4. **📊 Analyze Data**: Use Python scientific stack for data analysis
-5. **🚀 Deploy to Hardware**: Transfer from simulation to real robots
-
-## Getting Help
-
-### Need Assistance?
-
-1. **📖 Check Documentation**: Start with the relevant guide above
-2. **🔍 Search Issues**: Look through [troubleshooting guides](docs/troubleshooting/)
-3. **💬 Ask Community**: 
-   - [ROS Answers](https://answers.ros.org)
-   - [ROS Discourse](https://discourse.ros.org)
-   - [GitHub Issues](https://github.com) (for specific packages)
-
-### Contributing
-
-Found an issue or want to improve the documentation?
-
-1. **Report Issues**: Use GitHub issues for bugs or unclear documentation
-2. **Suggest Improvements**: Submit pull requests for enhancements
-3. **Share Experience**: Help others in the community forums
-
-## License and Attribution
-
-This documentation is released under the MIT License. See individual packages for their respective licenses:
-
-- **ROS Noetic**: [BSD License](http://wiki.ros.org/DevelopersGuide)
-- **Gazebo Classic**: [Apache 2.0 License](https://github.com/osrf/gazebo)
-- **Miniconda**: [BSD License](https://docs.conda.io/en/latest/license.html)
-
-## Next Steps
-
-### For Beginners
-1. Complete the [Quick Start Guide](docs/getting-started/quick-start.md)
-2. Follow the [Learning Path](docs/resources/learning-path.md)
-3. Try the basic examples in [Usage Guides](docs/usage/)
-
-### For Experienced Users
-1. Explore [Advanced Workflows](docs/usage/advanced-workflows.md)
-2. Check [Additional Resources](docs/resources/additional-resources.md)
-3. Contribute to the robotics community
-
-### For Educators
-1. Use this setup for robotics courses
-2. Adapt the [Learning Path](docs/resources/learning-path.md) for curriculum
-3. Share feedback and improvements
+This experimental repository is for educational and research purposes. Please:
+- **Respect the original research**: Credit the Yara_OVE academic contributors
+- **Use responsibly**: This is experimental software, not for production marine systems
+- **Share knowledge**: Contribute back to the sailing robotics community
+- **Follow academic standards**: Cite original work in any publications
 
 ---
 
-**🚀 Ready to start your robotics journey? Begin with the [Quick Start Guide](docs/getting-started/quick-start.md)!**
+**🌊 Ready to explore autonomous sailing? Your experimental journey begins with understanding the foundation → [Quick Start Guide](docs/getting-started/quick-start.md)**
+
+**⛵ Fascinated by sailing robotics? Dive into the original research → [Yara_OVE Repository](https://github.com/medialab-fboat/Yara_OVE)**
 
 ---
 
 <details>
-<summary>📋 Documentation Checklist</summary>
+<summary>📋 Experimental Roadmap</summary>
 
-### Documentation Overview
-- ✅ Getting Started (2 files)
-- ✅ Installation Guides (4 files) 
-- ✅ Usage Guides (4 files)
-- ✅ Troubleshooting (4 files)
-- ✅ Resources (2 files)
+### Phase 1: Foundation Setup
+- Install ROS Noetic + Gazebo + Python environment
+- Verify basic simulation capabilities
+- Review documentation structure
 
-**Total: 16 specialized documentation files + this navigation hub**
+### Phase 2: Yara_OVE Integration
+- Clone and build Yara_OVE framework
+- Configure sailing physics simulation
+- Run basic autonomous sailing demos
 
-### Last Updated
-This documentation was last updated on: **2025-09-04**
+### Phase 3: Advanced Experiments
+- Implement reinforcement learning integration
+- Create custom sailing scenarios
+- Perform performance analysis and optimization
 
-### Maintenance
-Documentation is actively maintained. Report issues or suggest improvements through GitHub.
+### Phase 4: Research Applications
+- Develop novel sailing strategies
+- Experiment with multi-boat coordination
+- Plan real-world validation
 
 </details>

@@ -1,6 +1,6 @@
 # Advanced Workflows
 
-This guide covers sophisticated integration patterns combining ROS, Gazebo, and Python environments for complex robotics projects.
+This guide covers integration patterns combining ROS, Gazebo simulation, and Python environments for complex robotics projects in the Yara_OVE experimental playground.
 
 ## Integrated Development Workflows
 
@@ -13,23 +13,23 @@ pip install rospkg rospy_message_converter
 source /opt/ros/noetic/setup.bash
 
 # 2. Start simulation environment
-roslaunch gazebo_ros empty_world.launch &
+roslaunch gazebo_ros empty_world.launch world_name:=custom_world.world &
 sleep 5
 
 # 3. Deploy robot with sensors
-rosrun gazebo_ros spawn_model -model my_robot -file robot_with_sensors.urdf -urdf
+rosrun gazebo_ros spawn_model -model robot -file robot_sensors.urdf -urdf
 
 # 4. Start data collection
-rosbag record /camera/image_raw /scan /odom -O experiment_data.bag &
+rosbag record /camera/image_raw /scan /odom -O experiment.bag &
 
 # 5. Run experiment
-python experiment_controller.py
+python mission_controller.py
 
 # 6. Analyze results
 python -c "
 import rosbag_pandas as rbp
 import matplotlib.pyplot as plt
-df = rbp.bag_to_dataframe('experiment_data.bag')
+df = rbp.bag_to_dataframe('experiment.bag')
 # Analysis code here
 "
 ```
@@ -40,7 +40,7 @@ df = rbp.bag_to_dataframe('experiment_data.bag')
 conda create -n dev python=3.9 pytest black flake8
 conda activate dev
 
-# Production environment  
+# Production environment
 conda create -n prod python=3.8 --file requirements.txt
 conda activate prod
 
@@ -49,9 +49,9 @@ conda create -n test python=3.8 pytest-cov hypothesis
 conda activate test
 
 # Switch between environments for different phases
-conda activate dev    # Development and debugging
-conda activate test   # Running tests
-conda activate prod   # Deployment and production runs
+conda activate dev    # Algorithm development and debugging
+conda activate test   # Running simulation tests
+conda activate prod   # Mission deployment
 ```
 
 ## Advanced ROS Integration
@@ -836,5 +836,13 @@ wait
 
 - **Basic Commands**: Review [Basic Commands](basic-commands.md) for fundamentals
 - **Troubleshooting**: Check component-specific troubleshooting guides
-- **Learning Path**: Follow [Learning Path](../resources/learning-path.md) for structured advancement
-- **Community**: Engage with ROS and robotics communities for advanced techniques
+- **Learning Path**: Follow [Learning Path](../resources/learning-path.md) for skill development
+- **Community**: Engage with robotics communities for advanced techniques
+
+---
+
+**🚀 Master Advanced Robotics with Yara_OVE!**
+
+*These workflows unlock the potential of the Yara_OVE experimental playground for complex robotics experiments and research.*
+
+*Building upon the work of the original [Yara_OVE project](https://github.com/medialab-fboat/Yara_OVE).*

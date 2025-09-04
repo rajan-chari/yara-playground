@@ -1,6 +1,6 @@
-# Conda-Specific Troubleshooting
+# Conda-Specific Troubleshooting for Sailing AI
 
-This guide addresses issues specific to Miniconda/Anaconda installation, environment management, and integration with ROS.
+This guide addresses issues specific to Miniconda/Anaconda installation, environment management, and integration with ROS for sailing AI development in the Yara_OVE experimental playground.
 
 ## Installation Issues
 
@@ -187,45 +187,48 @@ conda env remove -n myenv
 conda env create -f environment.yml
 ```
 
-## ROS Integration Issues
+## Sailing ROS Integration Issues
 
-### Conda-ROS Environment Conflicts
-**Problem**: ROS and conda environments interfere with each other
+### Conda-Sailing ROS Environment Conflicts
+**Problem**: ROS and conda environments interfere with sailing robotics development
 ```bash
-ImportError: No module named rospy (when conda activated)
-Python path conflicts between ROS and conda
+ImportError: No module named rospy (when sailing_ai conda environment activated)
+Python path conflicts between ROS and sailing AI conda packages
 ```
 
 **Solutions**:
 ```bash
-# Proper sourcing order in ~/.bashrc
-# 1. Source ROS first
+# Proper sourcing order for sailing robotics in ~/.bashrc
+# 1. Source ROS for sailing robotics first
 source /opt/ros/noetic/setup.bash
 
-# 2. Initialize conda
+# 2. Initialize conda for sailing AI
 source ~/miniconda3/etc/profile.d/conda.sh
 
-# 3. Activate conda environment
-conda activate robotics_env
+# 3. Activate sailing AI environment
+conda activate sailing_ai
 
-# Create ROS-compatible environment
-conda create -n ros_env python=3.8
-conda activate ros_env
+# Create sailing-compatible ROS environment
+conda create -n sailing_ai python=3.8
+conda activate sailing_ai
 pip install rospkg catkin_pkg rospy_message_converter
+pip install marine_navigation_lib  # Hypothetical sailing package
 
-# Set PYTHONPATH to include both ROS and conda
+# Set PYTHONPATH for sailing ROS and conda integration
 export PYTHONPATH=/opt/ros/noetic/lib/python3/dist-packages:$PYTHONPATH
 
-# Test ROS import in conda environment
-python -c "import rospy; print('ROS import successful')"
+# Test sailing ROS import in conda environment
+python -c "import rospy; print('Sailing ROS import successful')"
+python -c "import numpy; print('NumPy for sailing math available')"
 
-# Create wrapper script for ROS+conda
+# Create wrapper script for sailing ROS+conda
 #!/bin/bash
-# ros_conda_setup.sh
+# sailing_ros_conda_setup.sh
 source /opt/ros/noetic/setup.bash
 source ~/miniconda3/etc/profile.d/conda.sh
-conda activate $1
+conda activate sailing_ai
 export PYTHONPATH=/opt/ros/noetic/lib/python3/dist-packages:$PYTHONPATH
+echo "Sailing robotics environment ready"
 ```
 
 ### Python Version Conflicts
@@ -579,41 +582,47 @@ du -sh ~/miniconda3/
 
 ## Integration Best Practices
 
-### ROS + Conda Workflow
+### Sailing ROS + Conda Workflow
 ```bash
-# 1. Create robotics environment
-conda create -n robotics python=3.8 -y
-conda activate robotics
+# 1. Create sailing AI environment
+conda create -n sailing_ai python=3.8 -y
+conda activate sailing_ai
 
-# 2. Install scientific packages
+# 2. Install sailing-specific scientific packages
 conda install numpy scipy matplotlib opencv -c conda-forge
+conda install jupyter pandas scikit-learn pytorch -c conda-forge
 
-# 3. Install ROS-compatible packages
+# 3. Install sailing ROS-compatible packages
 pip install rospkg catkin_pkg rospy_message_converter
+pip install geopy pyproj  # For GPS and navigation calculations
+pip install windrose  # For wind data analysis
 
-# 4. Create activation script
-cat > ~/activate_ros_conda.sh << 'EOF'
+# 4. Create sailing activation script
+cat > ~/activate_sailing_ros_conda.sh << 'EOF'
 #!/bin/bash
 source /opt/ros/noetic/setup.bash
 source ~/miniconda3/etc/profile.d/conda.sh
-conda activate robotics
+conda activate sailing_ai
 export PYTHONPATH=/opt/ros/noetic/lib/python3/dist-packages:$PYTHONPATH
-echo "ROS + Conda environment activated"
+echo "Sailing ROS + Conda AI environment activated"
+echo "Ready for autonomous sailing development!"
 EOF
 
-chmod +x ~/activate_ros_conda.sh
+chmod +x ~/activate_sailing_ros_conda.sh
 
-# 5. Use in development
-source ~/activate_ros_conda.sh
-python your_ros_script.py
+# 5. Use in sailing development
+source ~/activate_sailing_ros_conda.sh
+python your_sailing_ai_script.py
+jupyter notebook  # For sailing data analysis
 ```
 
-### Environment Templates
+### Sailing AI Environment Templates
 ```yaml
-# environment_ros.yml - Template for ROS development
-name: ros_dev
+# environment_sailing_ai.yml - Template for sailing AI development
+name: sailing_ai
 channels:
   - conda-forge
+  - pytorch
   - defaults
 dependencies:
   - python=3.8
@@ -622,6 +631,9 @@ dependencies:
   - matplotlib
   - opencv
   - jupyter
+  - pandas
+  - scikit-learn
+  - pytorch
   - pytest
   - pip
   - pip:
@@ -629,6 +641,56 @@ dependencies:
     - catkin_pkg
     - rospy_message_converter
     - rosbag_pandas
+    - geopy
+    - pyproj
+    - windrose
+    - marine_weather_api
+```
+
+```yaml
+# environment_sailing_vision.yml - Template for marine computer vision
+name: sailing_vision
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+dependencies:
+  - python=3.8
+  - numpy
+  - opencv
+  - pytorch
+  - torchvision
+  - pillow
+  - matplotlib
+  - jupyter
+  - pip
+  - pip:
+    - rospkg
+    - cv_bridge
+    - marine_object_detection
+```
+
+```yaml
+# environment_sailing_rl.yml - Template for sailing reinforcement learning
+name: sailing_rl
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+dependencies:
+  - python=3.8
+  - numpy
+  - matplotlib
+  - pytorch
+  - gymnasium
+  - stable-baselines3
+  - tensorboard
+  - jupyter
+  - pip
+  - pip:
+    - rospkg
+    - sailing_gym_env
+    - yara_ove_rl
 ```
 
 ## Useful Diagnostic Commands
@@ -659,7 +721,7 @@ du -sh ~/miniconda3/
 
 ## Related Documentation
 
-- **Common Issues**: [Common Issues](common-issues.md) for general troubleshooting
-- **Installation**: [Miniconda Installation](../installation/miniconda.md) for setup guidance
-- **Usage**: [Python Environments](../usage/python-environments.md) for basic operations
-- **Verification**: [Installation Verification](../installation/verification.md) for testing
+- **Common Issues**: [Common Issues](common-issues.md) for general sailing robotics troubleshooting
+- **Installation**: [Miniconda Installation](../installation/miniconda.md) for sailing AI setup
+- **Usage**: [Sailing AI Environments](../usage/python-environments.md) for sailing development operations
+- **Verification**: [Installation Verification](../installation/verification.md) for sailing AI testing
