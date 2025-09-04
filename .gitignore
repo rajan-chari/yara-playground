@@ -343,3 +343,14 @@ docker-compose.override.yml
 *.tfstate
 *.tfstate.*
 .terraform/
+
+# Yara_OVE build artifacts
+yara-ove/build/
+yara-ove/devel/
+yara-ove/install/
+yara-ove/logs/
+
+# Yara_OVE specific files
+yara-ove/*.bag
+yara-ove/*.world~
+yara-ove/.*
