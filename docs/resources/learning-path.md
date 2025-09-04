@@ -1,6 +1,141 @@
 # Yara_OVE Autonomous Sailing Learning Path
 
 This guide provides a structured approach to mastering autonomous sailing robotics using the Yara_OVE experimental playground, progressing from basic marine simulation to advanced sailing AI.
+## YARA-OVE Ocean Simulation Progression
+
+This section provides a learning progression from basic wave physics to autonomous sailing research.
+
+### Phase 1: Ocean Environment Mastery (Hours 1-10)
+**Objective**: Master YARA-OVE ocean simulation fundamentals and wave physics
+
+**Prerequisites**: 
+- Completed [Quick Start](../getting-started/quick-start.md) setup
+- ROS Noetic and Gazebo Classic 11 operational
+- Basic understanding of marine environments
+
+**Learning Path**:
+1. **Launch Ocean World** (Hour 1-2)
+   ```bash
+   # Start YARA-OVE ocean simulation
+   roslaunch wave_gazebo ocean_world.launch
+   ```
+   - Learn the basic ocean world launch command
+   - Explore the 1000m×1000m ocean environment
+   - Understand the default Gerstner wave implementation
+
+2. **Wave Physics Analysis** (Hour 3-5)
+   - Study wave parameters: 5s period, 1.5 scale, 0.1 gain
+   - Observe Pierson-Moskowitz spectrum modeling in action
+   - Understand GPU-accelerated wave rendering (30Hz update rate)
+   - Analyze 50×50 cell discretization grid
+
+3. **Ocean Scenarios Exploration** (Hour 6-8)
+   - Practice with [YARA-OVE Scenarios](../usage/yara-ove-scenarios.md)
+   - Level 1: Basic ocean waves and environment familiarization
+   - Level 2: Navigation buoys and obstacle understanding
+   - Level 3: Sailing demonstration preparation
+
+4. **Technical Deep Dive** (Hour 9-10)
+   - Review [Wave Physics Technical Details](additional-resources.md#wave-physics-technical-deep-dive)
+   - Understand vertex shader implementation
+   - Explore Gerstner wave mathematics and parameters
+
+**Outcomes**:
+- Ocean world launching and navigation
+- Understanding of underlying wave physics
+- Familiarity with different scenario complexity levels
+- Prepared for sailing model integration
+
+### Phase 2: Sailing Model Integration (Hours 11-25)
+**Objective**: Integrate and control sailing boat models in ocean environments
+
+**Learning Path**:
+1. **EBoat Model Mastery** (Hour 11-15)
+   - Launch 2.5m research vessel in ocean environment
+   - Understand 6-DOF sailing physics integration
+   - Practice basic sailing maneuvers and controls
+   - Explore autonomous sailing control systems
+
+2. **Fortune612 Model Practice** (Hour 16-20)
+   - Work with 0.99m RC boat model
+   - Compare different boat model capabilities
+   - Practice scale-appropriate sailing scenarios
+   - Understand model-specific physics parameters
+
+3. **Advanced Ocean Scenarios** (Hour 21-25)
+   - Complete Level 2 navigation buoy scenarios
+   - Practice obstacle avoidance with sailing models
+   - Implement basic waypoint navigation
+   - Explore multi-boat scenarios
+
+**Outcomes**:
+- Familiar with both sailing models
+- Understanding of sailing physics in wave environments
+- Basic autonomous sailing capabilities
+- Prepared for sailing research
+
+### Phase 3: Autonomous Sailing Research (Hours 26-50)
+**Objective**: Develop advanced autonomous sailing capabilities and research applications
+
+**Learning Path**:
+1. **ESailor RL Framework** (Hour 26-35)
+   - Integrate reinforcement learning with sailing models
+   - Understand sailing-specific RL reward functions
+   - Practice policy training in ocean environments
+   - Implement adaptive sailing strategies
+
+2. **Advanced Sailing Algorithms** (Hour 36-45)
+   - Implement wind-aware path planning
+   - Develop tacking and jibing algorithms
+   - Create sailing-specific obstacle avoidance
+   - Practice long-distance autonomous navigation
+
+3. **Research Applications** (Hour 46-50)
+   - Choose specialized research direction:
+     - Ocean monitoring missions
+     - Multi-boat coordination
+     - Performance optimization
+     - Weather adaptation systems
+   - Implement complete research demonstration
+   - Document results and prepare for real-world deployment
+
+**Outcomes**:
+- Autonomous sailing system
+- Sailing robotics capabilities
+- Prepared for sailing robot deployment
+- Ready for specialized sailing research
+
+### Progress Metrics by Phase
+
+**Phase 1 Completion Indicators**:
+- [ ] Launches [`roslaunch wave_gazebo ocean_world.launch`](../getting-started/quick-start.md#yara-ove-ocean-simulation) consistently
+- [ ] Can explain Gerstner wave parameters and their effects
+- [ ] Navigates all three scenario complexity levels
+- [ ] Understands GPU-accelerated wave rendering concepts
+
+**Phase 2 Completion Indicators**:
+- [ ] Controls both [`EBoat`](../usage/yara-ove-scenarios.md#level-3-sailing-demonstrations) and [`Fortune612`](../usage/yara-ove-scenarios.md#level-3-sailing-demonstrations) models
+- [ ] Implements basic waypoint navigation in waves
+- [ ] Demonstrates sailing maneuvers (tacking, jibing)
+- [ ] Completes navigation buoy scenarios
+
+**Phase 3 Completion Indicators**:
+- [ ] Integrates RL framework for autonomous sailing
+- [ ] Develops wind-aware sailing strategies
+- [ ] Completes research demonstration
+- [ ] Prepared for sailing robot deployment
+
+### Integration with Full Learning Path
+
+This YARA-OVE progression perfectly prepares students for the comprehensive sailing robotics curriculum below, providing hands-on experience with the simulation environment before diving into the detailed theoretical and practical learning modules.
+
+**Recommended Flow**:
+1. Complete YARA-OVE Ocean Simulation Progression (50 hours)
+2. Proceed to Beginner Level: Sailing Fundamentals (Weeks 1-4)
+3. Continue with Advanced and Mastery levels as outlined
+
+---
+
 
 ## Beginner Level: Sailing Fundamentals (Weeks 1-4)
 
@@ -32,7 +167,7 @@ roscd sailing_navigation
 rosls marine_sensors
 ```
 
-**Expected Outcome**: Comfortable with sailing robotics setup and basic marine concepts
+**Outcome**: Familiar with sailing robotics setup and basic marine concepts
 
 ### Week 2: Sailing ROS Fundamentals
 **Objective**: Master core ROS concepts for sailing robot communication and control
@@ -98,7 +233,7 @@ if __name__ == '__main__':
         pass
 ```
 
-**Expected Outcome**: Can create sailing robot packages and write marine sensor nodes
+**Outcome**: Can create sailing robot packages and write marine sensor nodes
 
 ### Week 3: Python for Sailing AI
 **Objective**: Set up Python environment and learn sailing-specific libraries for autonomous navigation
@@ -166,7 +301,7 @@ plt.grid(True)
 plt.show()
 ```
 
-**Expected Outcome**: Comfortable with Python tools for sailing robotics and navigation
+**Outcome**: Familiar with Python tools for sailing robotics and navigation
 
 ### Week 4: Yara_OVE Marine Simulation Basics
 **Objective**: Master sailing robot simulation and marine 3D environments using Yara_OVE
@@ -240,7 +375,7 @@ rosrun gazebo_ros spawn_model -file e_boat.urdf -urdf -model sailing_robot \
 </robot>
 ```
 
-**Expected Outcome**: Can launch Yara_OVE marine simulation and work with E-Boat models
+**Outcome**: Can launch Yara_OVE marine simulation and work with E-Boat models
 
 ---
 

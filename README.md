@@ -8,6 +8,28 @@ This repository serves as a hands-on exploration platform for **Yara_OVE**, an a
 
 **This is not a production system** – it's a learning laboratory where you can experiment with sailing robotics technology.
 
+## Implementation Status
+
+This experimental playground provides an autonomous sailing robotics environment with wave physics simulation.
+
+### Available Features
+- **Environment Setup**: ROS Noetic, Gazebo 11, and Conda integration
+- **Ocean Simulation**: Launch with [`roslaunch wave_gazebo ocean_world.launch`](yara-ove/wave_gazebo/launch/ocean_world.launch)
+- **Wave Physics**: Gerstner wave implementation with Pierson-Moskowitz spectrum modeling
+- **GPU-Accelerated Rendering**: Vertex shaders for ocean visualization
+- **Multiple Scenarios**: Ocean waves, buoys, and sailing boat demonstrations
+
+### Ocean Simulation
+**Basic Usage**: Wave physics with modeling
+```bash
+cd ~/yara_ws && source devel/setup.bash
+roslaunch wave_gazebo ocean_world.launch
+```
+
+**Sailing Boat Models**: EBoat (2.5m research vessel) and Fortune612 (0.99m RC boat)
+**Scenarios**: Ocean with navigation buoys, WAMV demonstrations, sailing physics
+**Research Integration**: ESailor reinforcement learning environments
+
 ## Yara_OVE Integration
 
 The Yara_OVE framework is now included as a git submodule at [`yara-ove/`](yara-ove/) for direct experimentation. To set up the integrated framework, run the setup script:
@@ -16,26 +38,59 @@ The Yara_OVE framework is now included as a git submodule at [`yara-ove/`](yara-
 ./scripts/setup-yara-ove.sh
 ```
 
+
+## 🗺️ Navigation Guide
+
+### 🌊 **New to YARA-OVE Ocean Simulation?**
+**Getting started with ocean simulation:**
+1. **[Quick Start Guide](docs/getting-started/quick-start.md#yara-ove-ocean-simulation)** - Launch ocean world
+2. **[YARA-OVE Scenarios](docs/usage/yara-ove-scenarios.md)** - Three complexity levels
+3. **[Wave Physics Deep Dive](docs/resources/additional-resources.md#wave-physics-technical-deep-dive)** - Understanding the science
+4. **[Learning Path](docs/resources/learning-path.md#yara-ove-ocean-simulation-progression)** - Structured progression
+
+### 🤖 **AI/ML & Sailing Robotics Focus?**
+**Autonomous sailing AI pathway:**
+1. **[System Architecture](docs/getting-started/system-requirements.md#yara-ove-system-architecture)** - Platform overview
+2. **[Sailing AI Environments](docs/usage/python-environments.md#yara-ove-sailing-robotics-environments)** - ML development setup
+3. **[Advanced Workflows](docs/usage/advanced-workflows.md#yara-ove-sailing-robotics-research)** - Research approaches
+4. **[ESailor RL Integration](docs/usage/python-environments.md#esailor-reinforcement-learning-environment)** - Sailing agent training
+
+### ⛵ **Practical Sailing Models & Commands?**
+**Working with sailing models:**
+1. **[YARA-OVE Sailing Models](docs/usage/basic-commands.md#yara-ove-sailing-boat-models)** - EBoat & Fortune612 control
+2. **[Gazebo Ocean Simulation](docs/usage/gazebo-simulation.md#yara-ove-ocean-simulation)** - Marine physics
+3. **[Performance Benchmarking](docs/usage/python-environments.md#performance-benchmarking-environment)** - System optimization
+4. **[Digital Twin Validation](docs/usage/python-environments.md#digital-twin-validation-environment)** - Model comparison
+
+### 🔬 **Research & Development Focus?**
+**Sailing robotics research:**
+1. **[Value Propositions](docs/getting-started/system-requirements.md#value-propositions)** - Research overview
+2. **[Sailing Algorithms](docs/resources/learning-path.md#phase-3-autonomous-sailing-research-hours-26-50)** - Research applications
+3. **[Wave Physics Technical Details](docs/resources/additional-resources.md#wave-physics-technical-deep-dive)** - Gerstner wave mathematics
+4. **[Multi-Boat Scenarios](docs/usage/basic-commands.md#multi-boat-scenarios)** - Fleet coordination
+
+**🌊 Next Step**: Launch ocean simulation → [YARA-OVE Scenarios Guide](docs/usage/yara-ove-scenarios.md)
+
 ## About Yara_OVE
 
-**Yara_OVE** is an ocean virtual environment designed specifically for autonomous sailing robots, originally developed by researchers at Medialab FBoat. The system offers:
+**Yara_OVE** is an ocean virtual environment for autonomous sailing robots, originally developed by researchers at Medialab FBoat. The system provides:
 
-### 🌊 **Advanced Sailing Physics**
-- **6-DOF sailing dynamics**: Complete freedom of movement with realistic boat physics
+### 🌊 **Sailing Physics**
+- **6-DOF sailing dynamics**: Freedom of movement with boat physics
 - **300x real-time speedup**: Accelerated learning and experimentation
-- **Specialized wind/wave simulation**: Dynamic environmental conditions
+- **Wind/wave simulation**: Dynamic environmental conditions
 - **Digital twin of E-Boat**: Based on real-world sailing vessel data
 
-### 🤖 **Autonomous Navigation Capabilities**
+### 🤖 **Navigation Capabilities**
 - **Reinforcement learning integration**: Train AI agents for sailing decisions
-- **Autonomous tacking maneuvers**: Complex sailing behaviors
-- **Upwind navigation strategies**: Advanced sailing techniques
-- **Real-time decision making**: Adaptive responses to changing conditions
+- **Tacking maneuvers**: Sailing behaviors
+- **Upwind navigation strategies**: Sailing techniques
+- **Real-time decision making**: Responses to changing conditions
 
-### 🏗️ **Built on Proven Technology**
-- **Gazebo simulation engine**: Industry-standard 3D physics
+### 🏗️ **Built on Technology**
+- **Gazebo simulation engine**: 3D physics
 - **ROS integration**: Robot Operating System compatibility
-- **Extensible architecture**: Customize for your experiments
+- **Extensible architecture**: Customizable for experiments
 
 ## Why Experiment with Sailing Robotics?
 
@@ -111,20 +166,21 @@ We gratefully acknowledge the researchers at **Medialab FBoat** who developed th
 The existing documentation structure supports your Yara_OVE experimentation:
 
 ### 🚀 Getting Started
-- [**Quick Start Guide**](docs/getting-started/quick-start.md) - Foundation setup verification
-- [**System Requirements**](docs/getting-started/system-requirements.md) - Prerequisites for sailing simulation
+- [**Quick Start Guide**](docs/getting-started/quick-start.md) - Foundation setup and YARA-OVE ocean launch
+- [**System Requirements**](docs/getting-started/system-requirements.md) - Prerequisites and system architecture overview
 
 ### 📥 Installation Guides
-- [**ROS Noetic Installation**](docs/installation/ros-noetic.md) - Core robotics framework
-- [**Gazebo Installation**](docs/installation/gazebo.md) - 3D sailing simulation environment
-- [**Miniconda Installation**](docs/installation/miniconda.md) - Python for algorithm development
-- [**Installation Verification**](docs/installation/verification.md) - Confirm your foundation is solid
+- [**ROS Noetic Installation**](docs/installation/ros-noetic.md) - Robotics framework
+- [**Gazebo Installation**](docs/installation/gazebo.md) - 3D simulation environment
+- [**Miniconda Installation**](docs/installation/miniconda.md) - Python for development
+- [**Installation Verification**](docs/installation/verification.md) - Verify installation
 
 ### 💻 Usage Guides
-- [**Basic Commands**](docs/usage/basic-commands.md) - Essential ROS commands for sailing
-- [**Gazebo Simulation**](docs/usage/gazebo-simulation.md) - Running sailing simulations
-- [**Python Environments**](docs/usage/python-environments.md) - ML/AI development setup
-- [**Advanced Workflows**](docs/usage/advanced-workflows.md) - Complex sailing experiments
+- [**Basic Commands**](docs/usage/basic-commands.md) - ROS commands and YARA-OVE sailing models
+- [**Gazebo Simulation**](docs/usage/gazebo-simulation.md) - Running simulations and YARA-OVE ocean physics
+- [**Python Environments**](docs/usage/python-environments.md) - ML/AI setup and sailing robotics environments
+- [**Advanced Workflows**](docs/usage/advanced-workflows.md) - Complex experiments and sailing research
+- [**YARA-OVE Scenarios**](docs/usage/yara-ove-scenarios.md) - Sailing complexity levels
 
 ### 🔧 Troubleshooting
 - [**Common Issues**](docs/troubleshooting/common-issues.md) - General troubleshooting
@@ -133,8 +189,8 @@ The existing documentation structure supports your Yara_OVE experimentation:
 - [**Conda-Specific Issues**](docs/troubleshooting/conda-specific.md) - Python environment problems
 
 ### 📚 Resources
-- [**Learning Path**](docs/resources/learning-path.md) - Structured approach to sailing robotics
-- [**Additional Resources**](docs/resources/additional-resources.md) - External sailing robotics resources
+- [**Learning Path**](docs/resources/learning-path.md) - Structured progression and YARA-OVE ocean simulation
+- [**Additional Resources**](docs/resources/additional-resources.md) - External resources and wave physics details
 
 ## Required Foundation Components
 
@@ -204,9 +260,13 @@ This experimental repository is for educational and research purposes. Please:
 
 ---
 
-**🌊 Ready to explore autonomous sailing? Your experimental journey begins with understanding the foundation → [Quick Start Guide](docs/getting-started/quick-start.md)**
+**🌊 Launch YARA-OVE ocean simulation → [YARA-OVE Ocean Launch](docs/getting-started/quick-start.md#yara-ove-ocean-simulation)**
 
-**⛵ Fascinated by sailing robotics? Dive into the original research → [Yara_OVE Repository](https://github.com/medialab-fboat/Yara_OVE)**
+**⛵ Explore sailing scenarios → [YARA-OVE Scenarios Guide](docs/usage/yara-ove-scenarios.md)**
+
+**🤖 Sailing AI research → [YARA-OVE Learning Progression](docs/resources/learning-path.md#yara-ove-ocean-simulation-progression)**
+
+**🔬 Wave physics details → [Wave Physics Technical Details](docs/resources/additional-resources.md#wave-physics-technical-deep-dive)**
 
 ---
 

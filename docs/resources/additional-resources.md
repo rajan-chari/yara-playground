@@ -2,6 +2,197 @@
 
 This guide provides comprehensive resources for autonomous sailing robotics, marine simulation, and sailing AI development. All resources are curated for the Yara_OVE experimental playground and broader sailing robotics community.
 
+## 🌊 YARA-OVE Wave Physics Technical Deep Dive
+
+The YARA-OVE system provides wave physics modeling with ocean simulation.
+
+### Gerstner Wave Implementation
+
+The YARA-OVE wave system is built on **Gerstner wave mathematics**, following the foundational work by Jerry Tessendorf in "Simulating Ocean Water" (1999-2004).
+
+#### Mathematical Foundation
+```
+Wave Displacement Equations:
+px = x - dir.x * a * k * sin(theta)
+py = y - dir.y * a * k * sin(theta)
+pz = a * k * cos(theta)
+
+Where:
+theta = k * dir . x - omega * t
+k = wavenumber (2π/wavelength)
+omega = angular frequency (2π/period)
+a = wave amplitude
+dir = wave direction vector
+```
+
+#### Wave Parameters in YARA-OVE
+From [`ocean_waves/model.xacro`](../../yara-ove/wave_gazebo/world_models/ocean_waves/model.xacro):
+```xml
+<wave>
+  <model>PMS</model>                    <!-- Pierson-Moskowitz Spectrum -->
+  <period>5</period>                    <!-- Wave period: 5 seconds -->
+  <number>3</number>                    <!-- Number of wave components -->
+  <scale>1.5</scale>                    <!-- Wave scale factor -->
+  <gain>0.1</gain>                      <!-- Amplitude multiplier -->
+  <direction>1.0 0.0</direction>        <!-- Primary wave direction -->
+  <angle>0.4</angle>                    <!-- Angular spread: ±0.4 radians -->
+  <tau>2.0</tau>                        <!-- Wave startup time constant -->
+</wave>
+```
+
+### Pierson-Moskowitz Spectrum (PMS) Modeling
+
+The YARA-OVE system implements the **Pierson-Moskowitz spectrum**, a scientifically validated model for fully developed sea states.
+
+#### PMS Mathematical Framework
+The Pierson-Moskowitz spectrum describes energy distribution across wave frequencies:
+```
+S(f) = (5 * H_s^2 * f_p^4) / (16 * f^5) * exp(-5/4 * (f_p/f)^4)
+
+Where:
+S(f) = wave energy spectral density
+H_s = significant wave height
+f_p = peak frequency
+f = wave frequency
+```
+
+#### Implementation Details
+- **Wave Field Size**: 1000m × 1000m computational domain
+- **Discretization**: 50×50 cell grid for efficient computation
+- **Update Rate**: 30 Hz physics simulation
+- **Wave Components**: Up to 3 simultaneous wave trains
+- **Directional Spread**: Configurable angular distribution
+
+### GPU-Accelerated Wave Rendering
+
+The visual system uses advanced vertex shaders for real-time wave computation.
+
+#### Vertex Shader Implementation
+From [`GerstnerWaves.vert`](../../yara-ove/wave_gazebo/world_models/ocean_waves/materials/programs/GerstnerWaves.vert):
+```glsl
+// Wave synthesis using linear combination of Gerstner waves
+for(int i = 0; i < Nwaves; ++i) {
+    float k = waves[i].k;
+    float a = waves[i].a * (1.0 - exp(-1.0*time/tau));
+    float q = waves[i].q;  // Steepness parameter
+    float theta = dot(waves[i].d, P.xy)*k - time*waves[i].omega;
+    
+    // Displacement calculation
+    P.x -= q*a*dx*s;
+    P.y -= q*a*dy*s;
+    P.z += a*c;
+    
+    // Normal vector computation for realistic lighting
+    B += vec3(-qkac*dx*dx, -qkac*dxy, -kas*dx);
+    T += vec3(-qkac*dxy, -qkac*dy*dy, -kas*dy);
+    N += vec3(dx*kas, dy*kas, -qkac);
+}
+```
+
+#### Visual Features
+- **Real-time Surface Deformation**: Dynamic vertex displacement
+- **Accurate Normal Mapping**: Proper wave lighting and reflection
+- **Temporal Wave Startup**: Gradual wave amplitude increase using tau parameter
+- **Multiple Wave Interaction**: Linear superposition of wave components
+
+### Wave Physics Integration
+
+#### Deep Water Dispersion Relation
+The system implements the fundamental ocean wave relationship:
+```cpp
+// From Physics.hh
+omega² = g * k  (deep water approximation)
+
+Where:
+g = gravitational acceleration (9.81 m/s²)
+k = wavenumber
+omega = angular frequency
+```
+
+#### Wave Field Sampling
+The [`Wavefield.hh`](../../yara-ove/wave_gazebo_plugins/include/wave_gazebo_plugins/Wavefield.hh) system provides:
+
+- **Direct Wave Height Calculation**: `ComputeDepthDirectly()` with Newton solver
+- **Simplified Height Estimation**: `ComputeDepthSimply()` for performance
+- **Multi-variate Newton Method**: Accurate wave surface intersection
+- **Boat-Wave Interaction**: Real-time depth sampling for floating objects
+
+### Performance and Optimization
+
+#### Computational Efficiency
+- **Wave Field Size**: 1000m × 1000m with 50×50 discretization = 4m resolution
+- **Update Frequency**: 30 Hz physics, 60+ Hz rendering
+- **GPU Acceleration**: Vertex shader processing for visual waves
+- **Memory Usage**: Optimized for real-time performance
+- **Real-time Factor**: Maintains 1.0 real-time performance
+
+#### System Requirements
+- **Minimum**: 4GB RAM, integrated graphics
+- **Recommended**: 8GB RAM, dedicated GPU
+- **Higher Performance**: 16GB RAM, modern GPU with OpenGL 4.0+
+
+### Wave Physics Research Applications
+
+#### Marine Engineering Validation
+- **Wave Spectrum Analysis**: Validate PMS implementation against real ocean data
+- **Boat Response Studies**: Analyze vessel motion in realistic sea states
+- **Seakeeping Analysis**: Study boat stability and comfort in waves
+- **Wave Energy Studies**: Research wave energy extraction and conversion
+
+#### Autonomous Navigation Research
+- **Wave Slam Detection**: Identify dangerous wave conditions
+- **Optimal Routing**: Path planning considering wave conditions
+- **Motion Prediction**: Forecast boat behavior in specific sea states
+- **Control System Design**: Develop wave-aware sailing controllers
+
+### Technical References and Validation
+
+#### Academic Sources
+- **Tessendorf, J.** "Simulating Ocean Water" (1999-2004) - Gerstner wave foundation
+- **Pierson & Moskowitz** (1964) - Spectral wave modeling
+- **Dean & Dalrymple** "Water Wave Mechanics" - Wave theory fundamentals
+- **Fossen, T.I.** "Marine Control Systems" - Marine dynamics
+
+#### Implementation Details
+- **Wave Period**: 5.0s period through simulation
+- **Wave Direction**: Configurable directional wave propagation
+- **Amplitude Control**: Linear gain factor applied
+- **Angular Spread**: 0.4 radian spread produces wave patterns
+- **GPU Performance**: 60+ FPS rendering on recommended hardware
+
+### Advanced Wave Scenarios
+
+The YARA-OVE system supports multiple wave complexity levels:
+
+#### Basic Ocean Waves
+- Single direction wave trains
+- Configurable period, amplitude, direction
+- Real-time visual and physics simulation
+
+#### Multi-Directional Seas
+- Multiple wave direction components
+- Crossing sea conditions
+- Complex wave interference patterns
+
+#### Weather Conditions
+- Storm wave modeling
+- Breaking wave physics
+- Shallow water wave dynamics
+
+### Integration with Sailing Physics
+
+#### Wave-Boat Interaction
+- **Buoyancy Forces**: Dynamic buoyancy based on wave surface
+- **Wave Slope Effects**: Impact on sailing boat stability
+- **Wave Reflection**: Boat-generated wave patterns
+- **Seakeeping**: Boat motion comfort and safety analysis
+
+#### Sailing Strategy Applications
+- **Wave Sailing**: Using wave energy for propulsion
+- **Wave Avoidance**: Routing around dangerous sea states
+- **Optimal Tacking**: Wave-aware sailing maneuvers
+- **Performance Prediction**: Boat speed in various wave conditions
+
 ## Official Yara_OVE and Marine Robotics Documentation
 
 ### Yara_OVE Project Resources

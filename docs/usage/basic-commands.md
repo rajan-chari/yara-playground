@@ -199,6 +199,219 @@ rosservice call /gazebo/get_world_properties
 rosservice call /gazebo/set_physics_properties
 ```
 
+## YARA-OVE Sailing Boat Models
+
+### Ocean World Launch
+```bash
+# Launch YARA-OVE ocean simulation
+roslaunch wave_gazebo ocean_world.launch
+
+# Launch with specific parameters
+roslaunch wave_gazebo ocean_world.launch paused:=true gui:=true
+
+# Launch headless for performance
+roslaunch wave_gazebo ocean_world.launch gui:=false headless:=true
+```
+
+### EBoat Model (2.5m Research Vessel)
+```bash
+# Launch EBoat in ocean environment
+roslaunch yara_ove_experiments eboat_ocean.launch
+
+# Spawn EBoat model manually
+rosrun gazebo_ros spawn_model -model eboat \
+  -file $(rospack find yara_ove_models)/urdf/eboat.urdf \
+  -urdf -x 0 -y 0 -z 0.1
+
+# Monitor EBoat state
+rostopic echo /eboat/state
+
+# Control EBoat sail
+rostopic pub /eboat/sail_cmd std_msgs/Float64 "data: 0.5"
+
+# Control EBoat rudder
+rostopic pub /eboat/rudder_cmd std_msgs/Float64 "data: 0.2"
+```
+
+### Fortune612 Model (0.99m RC Boat)
+```bash
+# Launch Fortune612 in ocean environment  
+roslaunch yara_ove_experiments fortune612_ocean.launch
+
+# Spawn Fortune612 model manually
+rosrun gazebo_ros spawn_model -model fortune612 \
+  -file $(rospack find yara_ove_models)/urdf/fortune612.urdf \
+  -urdf -x 0 -y 0 -z 0.1
+
+# Monitor Fortune612 state
+rostopic echo /fortune612/state
+
+# Control Fortune612 sail
+rostopic pub /fortune612/sail_cmd std_msgs/Float64 "data: 0.3"
+
+# Control Fortune612 rudder  
+rostopic pub /fortune612/rudder_cmd std_msgs/Float64 "data: -0.1"
+```
+
+### Sailing Model Capabilities
+
+#### EBoat (2.5m Research Vessel)
+- **Length**: 2.5 meters
+- **Physics**: 6-DOF sailing dynamics
+- **Sensors**: GPS, IMU, wind sensor, compass
+- **Control**: Sail servo, rudder servo, navigation
+- **Applications**: Long-distance missions, research deployments
+- **Simulation**: Sailing behavior in waves
+
+```bash
+# EBoat sensor topics
+rostopic echo /eboat/gps/fix        # GPS coordinates
+rostopic echo /eboat/imu/data       # Orientation data  
+rostopic echo /eboat/wind_sensor    # Wind measurements
+rostopic echo /eboat/compass        # Magnetic heading
+
+# EBoat control topics
+rostopic pub /eboat/waypoint geometry_msgs/PointStamped "..."
+rostopic pub /eboat/sail_angle std_msgs/Float64 "data: 0.7"
+rostopic pub /eboat/rudder_angle std_msgs/Float64 "data: 0.2"
+```
+
+#### Fortune612 (0.99m RC Boat)
+- **Length**: 0.99 meters
+- **Physics**: Sailing dynamics
+- **Sensors**: GPS, IMU, wind sensor
+- **Control**: Sail/rudder servos
+- **Applications**: Testing, education, experiments
+- **Simulation**: Sailing for development
+
+```bash
+# Fortune612 sensor topics
+rostopic echo /fortune612/gps/fix      # GPS coordinates
+rostopic echo /fortune612/imu/data     # Orientation data
+rostopic echo /fortune612/wind_sensor  # Wind measurements
+
+# Fortune612 control topics  
+rostopic pub /fortune612/sail_cmd std_msgs/Float64 "data: 0.4"
+rostopic pub /fortune612/rudder_cmd std_msgs/Float64 "data: -0.3"
+```
+
+### Sailing Maneuvers
+
+#### Basic Sailing Commands
+```bash
+# Tacking maneuver (turn through wind)
+rostopic pub /boat/maneuver std_msgs/String "data: 'tack'"
+
+# Jibing maneuver (turn away from wind)  
+rostopic pub /boat/maneuver std_msgs/String "data: 'jibe'"
+
+# Point of sail commands
+rostopic pub /boat/point_of_sail std_msgs/String "data: 'close_hauled'"
+rostopic pub /boat/point_of_sail std_msgs/String "data: 'beam_reach'"
+rostopic pub /boat/point_of_sail std_msgs/String "data: 'broad_reach'"
+rostopic pub /boat/point_of_sail std_msgs/String "data: 'running'"
+```
+
+#### Autonomous Navigation
+```bash
+# Set waypoint navigation
+rostopic pub /boat/waypoint_nav geometry_msgs/PointStamped \
+  "header: {frame_id: 'map'} 
+   point: {x: 100.0, y: 50.0, z: 0.0}"
+
+# Follow GPS track
+rosrun yara_ove_navigation gps_follower.py track.gpx
+
+# Autonomous sailing mode
+rostopic pub /boat/mode std_msgs/String "data: 'autonomous'"
+
+# Manual control mode
+rostopic pub /boat/mode std_msgs/String "data: 'manual'"
+```
+
+### Wave and Wind Interaction
+
+#### Monitor Environmental Conditions
+```bash
+# Wave state information  
+rostopic echo /ocean/wave_state
+
+# Wind conditions
+rostopic echo /ocean/wind_state
+
+# Current simulation parameters
+rostopic echo /ocean/parameters
+```
+
+#### Sailing Performance Metrics
+```bash
+# Boat velocity and heading
+rostopic echo /boat/velocity
+
+# Sailing efficiency metrics
+rostopic echo /boat/performance
+
+# Distance to waypoint
+rostopic echo /boat/navigation/distance_to_waypoint
+
+# Sailing angle relative to wind
+rostopic echo /boat/sailing_angles
+```
+
+### Multi-Boat Scenarios
+
+#### Fleet Management
+```bash
+# Launch multiple boats
+roslaunch yara_ove_experiments multi_boat.launch num_boats:=3
+
+# Individual boat control
+rostopic pub /boat_1/sail_cmd std_msgs/Float64 "data: 0.5"
+rostopic pub /boat_2/sail_cmd std_msgs/Float64 "data: 0.6"  
+rostopic pub /boat_3/sail_cmd std_msgs/Float64 "data: 0.4"
+
+# Fleet coordination
+rostopic pub /fleet/formation std_msgs/String "data: 'line_abreast'"
+rostopic pub /fleet/maneuver std_msgs/String "data: 'synchronized_tack'"
+```
+
+### Troubleshooting Sailing Models
+
+#### Common Issues
+```bash
+# Check model spawn status
+rostopic echo /gazebo/model_states | grep boat
+
+# Verify sailing physics
+rosservice call /gazebo/get_model_state '{model_name: "eboat"}'
+
+# Reset boat position
+rosservice call /gazebo/set_model_state \
+  '{model_state: {model_name: "eboat", pose: {position: {x: 0, y: 0, z: 0.1}}}}'
+
+# Check wind sensor data
+rostopic echo /boat/wind_sensor --once
+
+# Verify sail/rudder response
+rostopic pub /boat/sail_cmd std_msgs/Float64 "data: 0.0" --once
+rostopic pub /boat/rudder_cmd std_msgs/Float64 "data: 0.0" --once
+```
+
+#### Performance Optimization
+```bash
+# Reduce simulation complexity
+roslaunch wave_gazebo ocean_world.launch wave_resolution:=25
+
+# Enable fast simulation mode
+rosparam set /use_sim_time true
+rosparam set /simulation_speedup 10.0
+
+# Monitor simulation performance
+rostopic hz /clock
+rostopic hz /gazebo/model_states
+```
+
+
 ## Miniconda Commands
 
 ### Environment Management
@@ -436,6 +649,6 @@ For advanced patterns and workflows, see [Advanced Workflows](advanced-workflows
 
 ---
 
-**⚡ Master These Commands for Effective Development!**
+**⚡ Commands for Development**
 
-*These commands form the foundation of your development workflow in the Yara_OVE experimental playground.*
+*These commands form the foundation of development workflow in the Yara_OVE experimental playground.*

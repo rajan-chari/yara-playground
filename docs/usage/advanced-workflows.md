@@ -2,6 +2,377 @@
 
 This guide covers integration patterns combining ROS, Gazebo simulation, and Python environments for complex robotics projects in the Yara_OVE experimental playground.
 
+## 🌊 YARA-OVE Sailing Robotics Workflows
+
+These workflows use the YARA-OVE wave physics system for autonomous sailing robotics research and development.
+
+### Autonomous Sailing Research Pipeline
+```bash
+# 1. Setup YARA-OVE sailing environment
+cd ~/yara_ws && source devel/setup.bash
+conda activate sailing_research
+
+# 2. Launch ocean simulation with wave physics
+roslaunch wave_gazebo ocean_world.launch &
+sleep 10
+
+# 3. Add sailing boat for experiments
+# rosrun gazebo_ros spawn_model -model eboat -file $(rospack find yara_description)/models/boto/model.sdf -sdf
+
+# 4. Start data collection for sailing analysis
+rosbag record /gazebo/model_states /cmd_vel /imu/data /wind -O sailing_experiment.bag &
+
+# 5. Run autonomous sailing controller
+python autonomous_sailing_controller.py
+
+# 6. Analyze sailing performance with wave interactions
+python sailing_performance_analyzer.py sailing_experiment.bag
+```
+
+### Roadmap for Sailing Experiments
+
+#### Phase 1: Ocean Physics
+- **Wave Physics Analysis**: Gerstner wave implementation with PMS modeling
+- **Ocean World Launch**: Running [`roslaunch wave_gazebo ocean_world.launch`](../../yara-ove/wave_gazebo/launch/ocean_world.launch)
+- **GPU-Accelerated Rendering**: Wave visualization with vertex shaders
+- **Scenario Documentation**: [YARA-OVE Scenarios Guide](yara-ove-scenarios.md)
+
+#### Phase 2: Sailing Boat Integration
+```bash
+# EBoat (Research Vessel) Integration
+# 1. Spawn EBoat digital twin
+rosrun gazebo_ros spawn_model \
+  -model eboat_research \
+  -file $(rospack find yara_description)/models/boto/model.sdf \
+  -sdf -x 0 -y 0 -z 1.0
+
+# 2. Setup sail control interfaces
+rostopic pub /eboat/sail_cmd std_msgs/Float64 "data: 0.5"
+rostopic pub /eboat/rudder_cmd std_msgs/Float64 "data: 0.0"
+
+# 3. Monitor boat dynamics in waves
+rostopic echo /gazebo/model_states | grep eboat
+```
+
+```bash
+# Fortune612 (RC Boat) Integration
+# 1. Spawn Fortune612 model
+rosrun gazebo_ros spawn_model \
+  -model fortune612 \
+  -file $(rospack find yara_description)/models/fortune612/model.sdf \
+  -sdf -x 5 -y 0 -z 1.0
+
+# 2. Control main sail and jib
+rostopic pub /fortune612/main_sail_cmd std_msgs/Float64 "data: 0.3"
+rostopic pub /fortune612/jib_sail_cmd std_msgs/Float64 "data: 0.2"
+```
+
+#### Phase 3: Sailing Physics Research
+```python
+#!/usr/bin/env python3
+# sailing_physics_analyzer.py - Advanced sailing dynamics analysis
+import rospy
+import numpy as np
+from gazebo_msgs.msg import ModelStates
+from geometry_msgs.msg import Twist
+from std_msgs.msg import Float64
+
+class SailingPhysicsAnalyzer:
+    def __init__(self):
+        self.model_states_sub = rospy.Subscriber('/gazebo/model_states', ModelStates, self.model_callback)
+        self.wind_pub = rospy.Publisher('/wind/cmd', Twist, queue_size=1)
+        
+        # Sailing physics parameters
+        self.boat_name = "eboat_research"
+        self.current_pose = None
+        self.wave_height_history = []
+        
+    def model_callback(self, msg):
+        """Analyze boat motion in waves"""
+        if self.boat_name in msg.name:
+            idx = msg.name.index(self.boat_name)
+            self.current_pose = msg.pose[idx]
+            
+            # Wave interaction analysis
+            wave_height = self.current_pose.position.z
+            self.wave_height_history.append(wave_height)
+            
+            if len(self.wave_height_history) > 100:
+                self.analyze_wave_response()
+                
+    def analyze_wave_response(self):
+        """Analyze boat response to wave motion"""
+        heights = np.array(self.wave_height_history[-100:])
+        
+        # Calculate wave response metrics
+        wave_amplitude = np.std(heights)
+        wave_frequency = self.estimate_wave_frequency(heights)
+        
+        rospy.loginfo(f"Wave Response - Amplitude: {wave_amplitude:.3f}m, Frequency: {wave_frequency:.3f}Hz")
+        
+        # Clear history for next analysis
+        self.wave_height_history = self.wave_height_history[-20:]
+        
+    def estimate_wave_frequency(self, heights):
+        """Estimate dominant wave frequency from boat motion"""
+        fft = np.fft.fft(heights)
+        freqs = np.fft.fftfreq(len(heights), d=0.1)  # 10Hz sampling
+        dominant_freq = freqs[np.argmax(np.abs(fft[1:len(fft)//2])) + 1]
+        return abs(dominant_freq)
+
+if __name__ == '__main__':
+    rospy.init_node('sailing_physics_analyzer')
+    analyzer = SailingPhysicsAnalyzer()
+    rospy.spin()
+```
+
+#### Phase 4: Autonomous Sailing Control
+```python
+#!/usr/bin/env python3
+# autonomous_sailing_controller.py - AI-driven sailing control
+import rospy
+import numpy as np
+from geometry_msgs.msg import Twist
+from std_msgs.msg import Float64
+from sensor_msgs.msg import Imu
+from nav_msgs.msg import Odometry
+
+class AutonomousSailingController:
+    def __init__(self):
+        # Publishers for boat control
+        self.sail_pub = rospy.Publisher('/eboat/sail_cmd', Float64, queue_size=1)
+        self.rudder_pub = rospy.Publisher('/eboat/rudder_cmd', Float64, queue_size=1)
+        
+        # Subscribers for state estimation
+        rospy.Subscriber('/eboat/imu', Imu, self.imu_callback)
+        rospy.Subscriber('/eboat/odom', Odometry, self.odom_callback)
+        
+        # Sailing controller parameters
+        self.wind_direction = 0.0  # Relative wind direction
+        self.wind_speed = 5.0      # Wind speed (m/s)
+        self.target_heading = 0.0  # Target compass heading
+        
+        # Control loop timer
+        rospy.Timer(rospy.Duration(0.1), self.control_loop)
+        
+    def control_loop(self, event):
+        """Main autonomous sailing control loop"""
+        # Calculate optimal sail angle
+        sail_angle = self.calculate_sail_angle(self.wind_direction)
+        
+        # Calculate rudder angle for heading control
+        rudder_angle = self.calculate_rudder_angle(self.target_heading)
+        
+        # Publish control commands
+        self.sail_pub.publish(Float64(data=sail_angle))
+        self.rudder_pub.publish(Float64(data=rudder_angle))
+        
+    def calculate_sail_angle(self, wind_direction):
+        """Calculate optimal sail angle based on wind direction"""
+        # Simplified sail control logic
+        apparent_wind = wind_direction  # Simplified - should include boat speed
+        
+        if abs(apparent_wind) < 0.5:  # Head-to-wind (no-go zone)
+            return 0.0
+        elif apparent_wind > 0:  # Wind from starboard
+            return min(0.8, apparent_wind * 0.7)
+        else:  # Wind from port
+            return max(-0.8, apparent_wind * 0.7)
+            
+    def calculate_rudder_angle(self, target_heading):
+        """Calculate rudder angle for heading control"""
+        # Simplified heading control
+        heading_error = target_heading - self.current_heading
+        
+        # Normalize angle to [-pi, pi]
+        while heading_error > np.pi:
+            heading_error -= 2 * np.pi
+        while heading_error < -np.pi:
+            heading_error += 2 * np.pi
+            
+        # Proportional control
+        return np.clip(heading_error * 2.0, -0.5, 0.5)
+        
+    def imu_callback(self, msg):
+        """Process IMU data for orientation"""
+        # Extract heading from quaternion
+        # Simplified - should use proper quaternion to euler conversion
+        pass
+        
+    def odom_callback(self, msg):
+        """Process odometry for position and velocity"""
+        self.current_heading = msg.pose.pose.orientation.z  # Simplified
+
+if __name__ == '__main__':
+    rospy.init_node('autonomous_sailing_controller')
+    controller = AutonomousSailingController()
+    rospy.spin()
+```
+
+### Multi-Boat Coordination Experiments
+```python
+#!/usr/bin/env python3
+# fleet_coordination.py - Multi-boat sailing coordination
+import rospy
+from gazebo_msgs.msg import ModelStates
+import numpy as np
+
+class SailingFleetController:
+    def __init__(self, boat_names):
+        self.boat_names = boat_names
+        self.boat_positions = {}
+        self.formation_target = "line_formation"  # or "v_formation", "circle_formation"
+        
+        rospy.Subscriber('/gazebo/model_states', ModelStates, self.fleet_callback)
+        
+        # Publishers for each boat
+        self.boat_controllers = {}
+        for boat in boat_names:
+            self.boat_controllers[boat] = {
+                'sail': rospy.Publisher(f'/{boat}/sail_cmd', Float64, queue_size=1),
+                'rudder': rospy.Publisher(f'/{boat}/rudder_cmd', Float64, queue_size=1)
+            }
+    
+    def fleet_callback(self, msg):
+        """Coordinate multiple boats in formation"""
+        # Extract positions of all fleet boats
+        for boat in self.boat_names:
+            if boat in msg.name:
+                idx = msg.name.index(boat)
+                self.boat_positions[boat] = msg.pose[idx].position
+        
+        if len(self.boat_positions) == len(self.boat_names):
+            self.maintain_formation()
+    
+    def maintain_formation(self):
+        """Implement formation control logic"""
+        if self.formation_target == "line_formation":
+            self.line_formation_control()
+        elif self.formation_target == "v_formation":
+            self.v_formation_control()
+            
+    def line_formation_control(self):
+        """Maintain boats in line formation"""
+        # Calculate formation center
+        positions = list(self.boat_positions.values())
+        center_x = np.mean([p.x for p in positions])
+        center_y = np.mean([p.y for p in positions])
+        
+        # Control each boat to maintain formation
+        for i, boat in enumerate(self.boat_names):
+            target_x = center_x
+            target_y = center_y + (i - len(self.boat_names)//2) * 5.0  # 5m spacing
+            
+            # Simple formation control
+            pos = self.boat_positions[boat]
+            error_x = target_x - pos.x
+            error_y = target_y - pos.y
+            
+            # Convert to sail and rudder commands
+            sail_cmd = 0.5  # Constant sail setting
+            rudder_cmd = np.arctan2(error_y, error_x) * 0.5
+            
+            self.boat_controllers[boat]['sail'].publish(Float64(data=sail_cmd))
+            self.boat_controllers[boat]['rudder'].publish(Float64(data=rudder_cmd))
+
+# Usage
+if __name__ == '__main__':
+    rospy.init_node('sailing_fleet_controller')
+    fleet = SailingFleetController(['eboat_1', 'eboat_2', 'fortune612_1'])
+    rospy.spin()
+```
+
+### Research Applications and Future Directions
+
+#### 1. Ocean Monitoring Missions
+- **Environmental Data Collection**: Deploy autonomous sailing boats for ocean temperature, salinity measurements
+- **Wave Spectrum Analysis**: Use boat motion to validate Gerstner wave models
+- **Long-Duration Missions**: Test endurance and autonomous decision-making
+
+#### 2. Sailing Robotics Competitions
+- **RobotX Competition Training**: Practice obstacle avoidance with buoys
+- **World Robotic Sailing Championship**: Test autonomous navigation strategies
+- **Custom Challenges**: Design sailing tasks using YARA-OVE scenarios
+
+#### 3. Advanced Research Topics
+- **Machine Learning for Sailing**: Reinforcement learning with ESailor integration
+- **Swarm Robotics**: Multi-boat coordination and communication
+- **Weather Routing**: Optimal path planning considering wind and wave conditions
+- **Energy Optimization**: Maximize sailing efficiency, minimize motor usage
+
+### Integration with ESailor RL Framework
+```python
+# rl_sailing_environment.py - Reinforcement learning integration
+import gym
+from gym import spaces
+import numpy as np
+import rospy
+from gazebo_msgs.msg import ModelStates
+
+class YaraOVESailingEnv(gym.Env):
+    """Custom Environment for YARA-OVE sailing RL experiments"""
+    
+    def __init__(self):
+        super(YaraOVESailingEnv, self).__init__()
+        
+        # Action space: [sail_angle, rudder_angle]
+        self.action_space = spaces.Box(
+            low=np.array([-1.0, -0.5]),
+            high=np.array([1.0, 0.5]),
+            dtype=np.float32
+        )
+        
+        # Observation space: [boat_pos_x, boat_pos_y, boat_heading, wind_direction, wave_height]
+        self.observation_space = spaces.Box(
+            low=np.array([-100, -100, -np.pi, -np.pi, -2.0]),
+            high=np.array([100, 100, np.pi, np.pi, 2.0]),
+            dtype=np.float32
+        )
+        
+        # ROS interface
+        rospy.init_node('rl_sailing_env')
+        rospy.Subscriber('/gazebo/model_states', ModelStates, self.model_callback)
+        
+    def step(self, action):
+        """Execute action and return observation, reward, done, info"""
+        # Apply action to boat
+        self.apply_sailing_action(action)
+        
+        # Get new observation
+        obs = self.get_observation()
+        
+        # Calculate reward
+        reward = self.calculate_reward(obs, action)
+        
+        # Check if episode is done
+        done = self.is_episode_done(obs)
+        
+        return obs, reward, done, {}
+        
+    def calculate_reward(self, obs, action):
+        """Calculate reward based on sailing performance"""
+        # Example reward function
+        # Reward for moving towards target
+        target_distance = np.sqrt(obs[0]**2 + obs[1]**2)
+        distance_reward = -target_distance * 0.01
+        
+        # Penalty for extreme actions
+        action_penalty = -0.1 * (np.abs(action[0]) + np.abs(action[1]))
+        
+        # Reward for efficient sailing (using wind)
+        wind_efficiency = np.cos(obs[3] - obs[2])  # Sailing angle efficiency
+        wind_reward = wind_efficiency * 0.1
+        
+        return distance_reward + action_penalty + wind_reward
+
+# Usage with stable-baselines3
+from stable_baselines3 import PPO
+
+env = YaraOVESailingEnv()
+model = PPO("MlpPolicy", env, verbose=1)
+model.learn(total_timesteps=10000)
+```
+
 ## Integrated Development Workflows
 
 ### Complete Robotics Pipeline
@@ -841,8 +1212,8 @@ wait
 
 ---
 
-**🚀 Master Advanced Robotics with Yara_OVE!**
+**Advanced Robotics with Yara_OVE**
 
-*These workflows unlock the potential of the Yara_OVE experimental playground for complex robotics experiments and research.*
+*These workflows use the Yara_OVE experimental playground for robotics experiments and research.*
 
 *Building upon the work of the original [Yara_OVE project](https://github.com/medialab-fboat/Yara_OVE).*
