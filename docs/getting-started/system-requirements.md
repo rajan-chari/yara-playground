@@ -1,5 +1,44 @@
 # System Requirements
 
+## YARA-OVE System Architecture
+
+### Core Components Integration
+YARA-OVE integrates multiple specialized components to deliver a comprehensive autonomous sailing simulation platform:
+
+**Simulation Core**:
+- **ROS Noetic**: Distributed robotics middleware for real-time communication
+- **Gazebo Classic 11**: Advanced physics simulation with marine-specific plugins
+- **Wave Physics Engine**: GPU-accelerated Gerstner wave implementation with Pierson-Moskowitz spectrum
+
+**Marine Simulation Stack**:
+- **Ocean Environment**: 1000m×1000m ocean world with realistic wave physics
+- **Sailing Models**: EBoat (2.5m research vessel) and Fortune612 (0.99m RC boat)
+- **Environmental Systems**: Dynamic wind modeling, GPS simulation, marine sensors
+
+**Performance Architecture**:
+- **300x Simulation Speedup**: Advanced temporal scaling for rapid experimentation
+- **GPU Acceleration**: Vertex shader-based wave rendering at 30Hz update rate
+- **Distributed Processing**: Multi-node ROS architecture supporting complex scenarios
+
+### Value Propositions
+
+**Research Excellence**:
+- Bridge simulation-to-reality gap with validated E-Boat digital twin
+- Accelerate sailing robotics research through proven 300x speedup capability
+- Access comprehensive wave physics modeling with Gerstner wave implementation
+
+**Educational Impact**:
+- Structured learning progression from basic ocean simulation to autonomous sailing
+- Hands-on experience with research-grade sailing robotics systems
+- Integration with modern AI/ML frameworks for sailing algorithm development
+
+**Industry Applications**:
+- Autonomous shipping route optimization and testing
+- Marine robotics system development and validation
+- Ocean monitoring mission planning and execution
+
+# System Requirements
+
 ## Operating System Compatibility
 
 ### Supported Systems
@@ -9,17 +48,23 @@
 
 ### Hardware Requirements
 
-#### Minimum Requirements
-- **CPU**: 2 cores, 2.0 GHz
-- **RAM**: 4 GB
-- **Storage**: 10 GB free space
-- **Graphics**: Intel HD Graphics or equivalent
+#### Minimum Requirements (Basic Ocean Simulation)
+- **CPU**: 4 cores, 2.5 GHz (for ROS Noetic + Gazebo Classic 11)
+- **RAM**: 8 GB (wave physics simulation requires additional memory)
+- **Storage**: 15 GB free space (includes wave_gazebo packages and models)
+- **Graphics**: OpenGL 3.3+ compatible GPU (required for wave rendering)
 
-#### Recommended Requirements
-- **CPU**: 4+ cores, 2.5+ GHz
-- **RAM**: 8+ GB
-- **Storage**: 20+ GB free space (SSD preferred)
-- **Graphics**: Dedicated GPU (enhanced rendering and processing)
+#### Recommended Requirements (Advanced Sailing Scenarios)
+- **CPU**: 8+ cores, 3.0+ GHz (optimal for 300x speedup capability)
+- **RAM**: 16+ GB (multi-boat scenarios and complex wave environments)
+- **Storage**: 50+ GB SSD (fast I/O for large simulation datasets)
+- **Graphics**: Dedicated GPU with 4+ GB VRAM (GPU-accelerated wave rendering at 30Hz)
+
+#### High-Performance Requirements (Research Applications)
+- **CPU**: 12+ cores, 3.5+ GHz (maximum simulation throughput)
+- **RAM**: 32+ GB (large-scale fleet simulations and ML training)
+- **Storage**: 100+ GB NVMe SSD (high-speed data processing)
+- **Graphics**: RTX 3060+ or equivalent (optimal wave physics rendering)
 
 ## System Verification
 
@@ -47,6 +92,89 @@ free -h
 - GCC 9.x compiler (for building packages)
 
 ### Gazebo Classic 11
+
+# GPU info (for wave rendering)
+lspci | grep VGA
+glxinfo | grep "OpenGL version"
+```
+
+## YARA-OVE Performance Verification
+
+### Ocean Simulation Readiness Check
+```bash
+# Test basic ocean world launch
+roslaunch wave_gazebo ocean_world.launch gui:=false &
+sleep 10
+
+# Verify wave physics topics
+rostopic list | grep wave
+rostopic echo /ocean/wave_state --once
+
+# Check simulation performance
+rostopic hz /clock
+
+# Cleanup
+pkill -f roslaunch
+```
+
+### GPU Acceleration Validation
+```bash
+# Check OpenGL support for wave rendering
+glxinfo | grep "direct rendering"
+glxinfo | grep "OpenGL version"
+
+# Verify GPU memory for wave physics
+nvidia-smi  # For NVIDIA GPUs
+gpu-manager --list  # For other GPUs
+
+# Test wave rendering performance
+roslaunch wave_gazebo ocean_world.launch &
+rostopic hz /gazebo/visual_quality
+```
+
+### System Performance Benchmarks
+
+**Basic Ocean Simulation (Target Performance)**:
+- Wave rendering: 30 Hz sustained
+- ROS node communication: <10ms latency
+- Memory usage: <4 GB for single boat scenario
+
+**Advanced Sailing Scenarios (Target Performance)**:
+- Multi-boat simulation: 5+ boats at 20 Hz
+- 300x speedup mode: Maintain >100x actual speedup
+- Memory usage: <16 GB for complex fleet operations
+
+**Research-Grade Performance (Target Performance)**:
+- Large-scale simulations: 10+ boats with full sensor suites
+- Real-time ML training: Concurrent RL policy updates
+- Data throughput: >1 GB/min simulation data recording
+
+### Troubleshooting Performance Issues
+
+**Low Frame Rate Solutions**:
+```bash
+# Reduce wave resolution for better performance
+roslaunch wave_gazebo ocean_world.launch wave_resolution:=25
+
+# Disable advanced visual effects
+roslaunch wave_gazebo ocean_world.launch visual_quality:=low
+
+# Enable headless mode for maximum performance
+roslaunch wave_gazebo ocean_world.launch gui:=false headless:=true
+```
+
+**Memory Optimization**:
+```bash
+# Limit simultaneous boats in scenarios
+rosparam set /max_boats 3
+
+# Reduce wave field complexity
+rosparam set /wave_field_size 500
+
+# Enable memory-efficient mode
+rosparam set /memory_optimization true
+```
+
 - OpenGL 3.3+ support
 - Mesa 18.0+ or proprietary GPU drivers
 - 2 GB RAM for basic simulation (4+ GB for complex scenarios)

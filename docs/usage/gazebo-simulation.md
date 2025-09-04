@@ -2,6 +2,97 @@
 
 This guide covers practical usage of Gazebo Classic for robotic simulation, supporting the Yara_OVE experimental playground.
 
+## 🌊 YARA-OVE Ocean Simulation
+
+**Successfully tested and verified!** The YARA-OVE ocean simulation provides advanced wave physics and realistic marine environments for autonomous sailing robotics research.
+
+### Ocean World Launch
+```bash
+# Navigate to workspace and source environment
+cd ~/yara_ws && source devel/setup.bash
+
+# Launch the ocean world with realistic wave physics
+roslaunch wave_gazebo ocean_world.launch
+
+# Alternative: Launch with custom parameters
+roslaunch wave_gazebo ocean_world.launch paused:=false gui:=true verbose:=true
+```
+
+### Wave Physics Analysis
+
+The YARA-OVE system implements **scientifically accurate wave modeling** with the following technical features:
+
+#### 🌊 Gerstner Wave Implementation
+- **Mathematical Model**: Based on Jerry Tessendorf's "Simulating Ocean Water" research
+- **Wave Equations**: `px = x - dir.x * a * k * sin(theta)`, `py = y - dir.y * a * k * sin(theta)`, `pz = a * k * cos(theta)`
+- **Physics**: `theta = k * dir . x - omega * t` (wavenumber k, angular frequency omega)
+
+#### 📊 Pierson-Moskowitz Spectrum (PMS)
+- **Ocean Model**: Scientifically accurate wave spectrum modeling
+- **Parameters**: Configurable wave period, amplitude, direction, and steepness
+- **Wave Synthesis**: Linear combination of multiple wave components (up to 3 for visualization)
+
+#### 🖥️ GPU-Accelerated Rendering
+- **Vertex Shaders**: [`GerstnerWaves.vert`](../../yara-ove/wave_gazebo/world_models/ocean_waves/materials/programs/GerstnerWaves.vert) for realistic wave displacement
+- **Real-time Calculation**: Dynamic wave surface generation with proper normal mapping
+- **Visual Effects**: Reflection, refraction, and foam rendering
+
+### Ocean Simulation Configuration
+```xml
+<!-- Wave parameters in ocean_waves model.xacro -->
+<wave>
+  <model>PMS</model>                    <!-- Pierson-Moskowitz Spectrum -->
+  <period>5</period>                    <!-- Wave period in seconds -->
+  <number>3</number>                    <!-- Number of wave components -->
+  <scale>1.5</scale>                    <!-- Wave scale factor -->
+  <gain>0.1</gain>                      <!-- Amplitude multiplier -->
+  <direction>1.0 0.0</direction>        <!-- Wave direction vector -->
+  <angle>0.4</angle>                    <!-- Angular spread -->
+  <tau>2.0</tau>                        <!-- Wave startup time constant -->
+</wave>
+```
+
+### Available Ocean Scenarios
+
+#### 1. Basic Ocean Waves
+```bash
+# Pure ocean environment with wave physics
+roslaunch wave_gazebo ocean_world.launch
+```
+
+#### 2. Ocean with Navigation Buoys
+```bash
+# Ocean environment with buoy obstacles for navigation testing
+# Uses: yara-ove/wave_gazebo/worlds/ocean_buoys.world.xacro
+```
+
+#### 3. Ocean with WAMV Demonstrations
+```bash
+# Complete maritime scene with boats and navigation markers
+# Uses: yara-ove/wave_gazebo/worlds/ocean_wamv.world.xacro
+```
+
+### Wave Physics Monitoring
+```bash
+# Monitor wave field parameters
+rostopic echo /gazebo/model_states | grep ocean_waves
+
+# Check wave physics performance
+rostopic echo /gazebo/performance_metrics
+
+# Wave gauge data (if available in scenario)
+rostopic echo /wave_gauge/wave_height
+```
+
+### Technical Insights
+
+**Wave Field Size**: 1000m x 1000m with 50x50 cell discretization
+**Update Rate**: 30 Hz for physics simulation
+**Visual Plugins**: Real-time reflection/refraction with 0.2 opacity
+**Physics Integration**: Deep water dispersion relation: `omega² = g*k`
+
+**Performance**: The system successfully runs complex wave simulations with multiple components while maintaining real-time performance suitable for autonomous sailing research.
+
 ## Getting Started with Simulation
 
 ### Basic Environment Launch
