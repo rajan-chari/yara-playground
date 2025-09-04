@@ -8,6 +8,14 @@ This repository serves as a hands-on exploration platform for **Yara_OVE**, an a
 
 **This is not a production system** – it's a learning laboratory where you can experiment with sailing robotics technology.
 
+## Yara_OVE Integration
+
+The Yara_OVE framework is now included as a git submodule at [`yara-ove/`](yara-ove/) for direct experimentation. To set up the integrated framework, run the setup script:
+
+```bash
+./scripts/setup-yara-ove.sh
+```
+
 ## About Yara_OVE
 
 **Yara_OVE** is an ocean virtual environment designed specifically for autonomous sailing robots, originally developed by researchers at Medialab FBoat. The system offers:
