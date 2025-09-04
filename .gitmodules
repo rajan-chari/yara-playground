@@ -1,5 +1,5 @@
 [submodule "yara-ove"]
 	path = yara-ove
-	url = https://github.com/medialab-fboat/Yara_OVE.git
+	url = https://github.com/rajan-chari/Yara_OVE
 	branch = main
 	update = rebase
